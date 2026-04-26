@@ -26,23 +26,52 @@ let userData = {
     targetCalories: 0,
 };
 
-// ===== 课程数据库 =====
-// type: cardio=有氧, pilates=普拉提, stretch=拉伸, correction=体态矫正
-const courses = [
-    // ---- 有氧燃脂 ----
-    { id: 1, title: '帕梅拉 - 30分钟经典燃脂三部曲', type: 'cardio', level: '高级', duration: '34分钟', 部位: '全身', icon: '🔥', target: ['apple', 'rectangle'], video: 'https://www.bilibili.com/video/BV1VTddBHEDE/', desc: '暴汗内啡肽+最佳HIIT+站立腹肌HIIT 燃烧200-350卡' },
+// ===== 课程数据库（支持远程更新） =====
+// 远程数据源：GitHub上的courses.json文件
+const COURSES_REMOTE_URL = 'https://raw.githubusercontent.com/luluy-blip/girlfit-website/main/courses.json';
 
-    // ---- 拉伸放松 ----
+// 本地内置课程（离线时使用）
+let courses = [
+    { id: 1, title: '帕梅拉 - 30分钟经典燃脂三部曲', type: 'cardio', level: '高级', duration: '34分钟', 部位: '全身', icon: '🔥', target: ['apple', 'rectangle'], video: 'https://www.bilibili.com/video/BV1VTddBHEDE/', desc: '暴汗内啡肽+最佳HIIT+站立腹肌HIIT 燃烧200-350卡' },
     { id: 2, title: '帕梅拉 - 10min 全身拉伸', type: 'stretch', level: '入门', duration: '10分钟', 部位: '全身', icon: '🧘', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: 'https://www.bilibili.com/video/BV1gf4y1p78A/', desc: '运动后全身伸展 有效放松肌肉 增强灵活性' },
     { id: 3, title: '帕梅拉 - 9min 臀+腿拉伸', type: 'stretch', level: '入门', duration: '10分钟', 部位: '臀腿', icon: '🍑', target: ['pear', 'hourglass'], video: 'https://www.bilibili.com/video/BV1Tw411Z7sV/', desc: '拉长腿部线条 塑形臀部 缓解肌肉酸痛' },
     { id: 4, title: '髋关节灵活度训练 10分钟', type: 'stretch', level: '入门', duration: '10分钟', 部位: '髋部', icon: '🦴', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: 'https://www.bilibili.com/video/BV1frcAevEp9/', desc: '10分钟完整版 提升髋关节活动度' },
-
-    // ---- 普拉提/力量 ----
     { id: 5, title: '普拉提100次瘦大腿内外侧', type: 'pilates', level: '初级', duration: '43分钟', 部位: '臀腿', icon: '🦵', target: ['pear', 'hourglass'], video: 'https://www.bilibili.com/video/BV1CueEzZE8Y/', desc: '普拉提专项训练 针对大腿内外侧塑形' },
-
-    // ---- 体态矫正 ----
     { id: 6, title: '欧阳春晓 - 足弓综合训练', type: 'correction', level: '入门', duration: '33分钟', 部位: '足部', icon: '🦶', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: 'https://www.bilibili.com/video/BV1jMhczREHc/', desc: '足弓塌陷矫正 综合训练改善足部问题' },
 ];
+
+// 从远程更新课程数据
+async function updateCoursesFromRemote() {
+    try {
+        const resp = await fetch(COURSES_REMOTE_URL + '?t=' + Date.now());
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const remoteData = await resp.json();
+        if (Array.isArray(remoteData) && remoteData.length > 0) {
+            courses = remoteData;
+            // 保存到本地缓存
+            localStorage.setItem('gf_courses', JSON.stringify(courses));
+            localStorage.setItem('gf_courses_updated', new Date().toLocaleString('zh-CN'));
+            return { success: true, count: remoteData.length };
+        }
+        throw new Error('数据格式错误');
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+}
+
+// 从本地缓存加载课程
+function loadCachedCourses() {
+    const cached = localStorage.getItem('gf_courses');
+    if (cached) {
+        try {
+            courses = JSON.parse(cached);
+        } catch(e) {}
+    }
+    return localStorage.getItem('gf_courses_updated') || '未更新过';
+}
+
+// 初始化时加载缓存
+loadCachedCourses();
 
 // ===== 微运动动作库 =====
 const microWorkouts = [
@@ -431,6 +460,39 @@ function filterCourses(type, el) {
 }
 
 // 初始化课程列表
+// ===== 在线更新功能 =====
+async function handleUpdateCourses() {
+    const btn = document.getElementById('updateBtn');
+    const lastUpdateEl = document.getElementById('lastUpdate');
+    btn.textContent = '更新中...';
+    btn.disabled = true;
+
+    const result = await updateCoursesFromRemote();
+
+    if (result.success) {
+        btn.textContent = '✅ 已更新';
+        lastUpdateEl.textContent = localStorage.getItem('gf_courses_updated');
+        // 重新渲染课程列表
+        initCourses();
+        // 重新渲染评估推荐（如果有的话）
+        if (document.getElementById('resultPanel').style.display !== 'none') {
+            generateRecommendedCourses();
+        }
+        setTimeout(() => { btn.textContent = '检查更新'; btn.disabled = false; }, 2000);
+    } else {
+        btn.textContent = '❌ 更新失败';
+        setTimeout(() => { btn.textContent = '检查更新'; btn.disabled = false; }, 2000);
+    }
+}
+
+// 页面加载时显示上次更新时间
+function showLastUpdate() {
+    const el = document.getElementById('lastUpdate');
+    if (el) {
+        el.textContent = localStorage.getItem('gf_courses_updated') || '未更新过';
+    }
+}
+
 function initCourses() {
     const grid = document.getElementById('coursesGrid');
     if (!grid) return;
@@ -656,6 +718,7 @@ function startSedentaryTracker() {
 // ===== 页面初始化 =====
 document.addEventListener('DOMContentLoaded', () => {
     initCourses();
+    showLastUpdate();
     startSedentaryTracker();
 
     // 请求通知权限

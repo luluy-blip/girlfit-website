@@ -876,6 +876,31 @@ body {
     margin-bottom: 16px;
 }
 
+/* 更新栏 */
+.update-bar {
+    max-width: 700px;
+    margin: 32px auto 0;
+    padding: 14px 20px;
+    background: white;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+}
+
+.update-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.update-icon {
+    font-size: 16px;
+}
+
 /* ===== 饮食管理 ===== */
 .diet-dashboard {
     max-width: 900px;

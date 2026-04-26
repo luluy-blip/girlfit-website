@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "帕梅拉 - 30分钟经典燃脂三部曲",
+    "type": "cardio",
+    "level": "高级",
+    "duration": "34分钟",
+    "部位": "全身",
+    "icon": "🔥",
+    "target": ["apple", "rectangle"],
+    "video": "https://www.bilibili.com/video/BV1VTddBHEDE/",
+    "desc": "暴汗内啡肽+最佳HIIT+站立腹肌HIIT 燃烧200-350卡"
+  },
+  {
+    "id": 2,
+    "title": "帕梅拉 - 10min 全身拉伸",
+    "type": "stretch",
+    "level": "入门",
+    "duration": "10分钟",
+    "部位": "全身",
+    "icon": "🧘",
+    "target": ["apple", "pear", "hourglass", "rectangle", "inverted-triangle"],
+    "video": "https://www.bilibili.com/video/BV1gf4y1p78A/",
+    "desc": "运动后全身伸展 有效放松肌肉 增强灵活性"
+  },
+  {
+    "id": 3,
+    "title": "帕梅拉 - 9min 臀+腿拉伸",
+    "type": "stretch",
+    "level": "入门",
+    "duration": "10分钟",
+    "部位": "臀腿",
+    "icon": "🍑",
+    "target": ["pear", "hourglass"],
+    "video": "https://www.bilibili.com/video/BV1Tw411Z7sV/",
+    "desc": "拉长腿部线条 塑形臀部 缓解肌肉酸痛"
+  },
+  {
+    "id": 4,
+    "title": "髋关节灵活度训练 10分钟",
+    "type": "stretch",
+    "level": "入门",
+    "duration": "10分钟",
+    "部位": "髋部",
+    "icon": "🦴",
+    "target": ["apple", "pear", "hourglass", "rectangle", "inverted-triangle"],
+    "video": "https://www.bilibili.com/video/BV1frcAevEp9/",
+    "desc": "10分钟完整版 提升髋关节活动度"
+  },
+  {
+    "id": 5,
+    "title": "普拉提100次瘦大腿内外侧",
+    "type": "pilates",
+    "level": "初级",
+    "duration": "43分钟",
+    "部位": "臀腿",
+    "icon": "🦵",
+    "target": ["pear", "hourglass"],
+    "video": "https://www.bilibili.com/video/BV1CueEzZE8Y/",
+    "desc": "普拉提专项训练 针对大腿内外侧塑形"
+  },
+  {
+    "id": 6,
+    "title": "欧阳春晓 - 足弓综合训练",
+    "type": "correction",
+    "level": "入门",
+    "duration": "33分钟",
+    "部位": "足部",
+    "icon": "🦶",
+    "target": ["apple", "pear", "hourglass", "rectangle", "inverted-triangle"],
+    "video": "https://www.bilibili.com/video/BV1jMhczREHc/",
+    "desc": "足弓塌陷矫正 综合训练改善足部问题"
+  }
+]
