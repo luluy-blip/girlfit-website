@@ -27,20 +27,21 @@ let userData = {
 };
 
 // ===== 课程数据库 =====
+// type: cardio=有氧, pilates=普拉提, stretch=拉伸, correction=体态矫正
 const courses = [
-    // video 字段：填入B站/抖音/embed链接即可播放，留空则显示占位
-    { id: 1, title: '晨间唤醒瑜伽', type: 'yoga', level: '入门', duration: '15分钟',部位: '全身', icon: '🧘', target: ['apple', 'pear', 'hourglass'], video: '' },
-    { id: 2, title: 'Tabata燃脂 HIIT', type: 'cardio', level: '中级', duration: '20分钟',部位: '全身', icon: '🔥', target: ['apple', 'rectangle'], video: '' },
-    { id: 3, title: '蜜桃臀养成', type: 'strength', level: '初级', duration: '25分钟',部位: '臀腿', icon: '🍑', target: ['pear', 'hourglass'], video: '' },
-    { id: 4, title: '告别拜拜肉', type: 'strength', level: '入门', duration: '15分钟',部位: '手臂', icon: '💪', target: ['inverted-triangle', 'rectangle'], video: '' },
-    { id: 5, title: '马甲线速成', type: 'strength', level: '中级', duration: '30分钟',部位: '腹部', icon: '✨', target: ['apple', 'hourglass'], video: '' },
-    { id: 6, title: '饭后消食操', type: 'cardio', level: '入门', duration: '10分钟',部位: '全身', icon: '🚶', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: '' },
-    { id: 7, title: '睡前拉伸放松', type: 'stretch', level: '入门', duration: '10分钟',部位: '全身', icon: '🌙', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: '' },
-    { id: 8, title: '韩舞燃脂操', type: 'dance', level: '初级', duration: '30分钟',部位: '全身', icon: '💃', target: ['pear', 'hourglass', 'rectangle'], video: '' },
-    { id: 9, title: '办公室5分钟', type: 'cardio', level: '入门', duration: '5分钟',部位: '全身', icon: '🏢', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: '' },
-    { id: 10, title: '背部塑形', type: 'strength', level: '初级', duration: '20分钟',部位: '背部', icon: '🏋️', target: ['inverted-triangle', 'rectangle'], video: '' },
-    { id: 11, title: '深蹲挑战30天', type: 'strength', level: '中级', duration: '15分钟',部位: '臀腿', icon: '🦵', target: ['pear', 'hourglass'], video: '' },
-    { id: 12, title: '全身燃脂舞蹈', type: 'dance', level: '初级', duration: '25分钟',部位: '全身', icon: '🎵', target: ['apple', 'rectangle', 'inverted-triangle'], video: '' },
+    // ---- 有氧燃脂 ----
+    { id: 1, title: '帕梅拉 - 30分钟经典燃脂三部曲', type: 'cardio', level: '高级', duration: '34分钟', 部位: '全身', icon: '🔥', target: ['apple', 'rectangle'], video: 'https://www.bilibili.com/video/BV1VTddBHEDE/', desc: '暴汗内啡肽+最佳HIIT+站立腹肌HIIT 燃烧200-350卡' },
+
+    // ---- 拉伸放松 ----
+    { id: 2, title: '帕梅拉 - 10min 全身拉伸', type: 'stretch', level: '入门', duration: '10分钟', 部位: '全身', icon: '🧘', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: 'https://www.bilibili.com/video/BV1gf4y1p78A/', desc: '运动后全身伸展 有效放松肌肉 增强灵活性' },
+    { id: 3, title: '帕梅拉 - 9min 臀+腿拉伸', type: 'stretch', level: '入门', duration: '10分钟', 部位: '臀腿', icon: '🍑', target: ['pear', 'hourglass'], video: 'https://www.bilibili.com/video/BV1Tw411Z7sV/', desc: '拉长腿部线条 塑形臀部 缓解肌肉酸痛' },
+    { id: 4, title: '髋关节灵活度训练 10分钟', type: 'stretch', level: '入门', duration: '10分钟', 部位: '髋部', icon: '🦴', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: 'https://www.bilibili.com/video/BV1frcAevEp9/', desc: '10分钟完整版 提升髋关节活动度' },
+
+    // ---- 普拉提/力量 ----
+    { id: 5, title: '普拉提100次瘦大腿内外侧', type: 'pilates', level: '初级', duration: '43分钟', 部位: '臀腿', icon: '🦵', target: ['pear', 'hourglass'], video: 'https://www.bilibili.com/video/BV1CueEzZE8Y/', desc: '普拉提专项训练 针对大腿内外侧塑形' },
+
+    // ---- 体态矫正 ----
+    { id: 6, title: '欧阳春晓 - 足弓综合训练', type: 'correction', level: '入门', duration: '33分钟', 部位: '足部', icon: '🦶', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: 'https://www.bilibili.com/video/BV1jMhczREHc/', desc: '足弓塌陷矫正 综合训练改善足部问题' },
 ];
 
 // ===== 微运动动作库 =====
@@ -420,7 +421,7 @@ function filterCourses(type, el) {
             <div class="course-info">
                 <div class="course-title">${c.title}</div>
                 <div class="course-meta">
-                    <span class="course-tag">${c.type === 'cardio' ? '有氧' : c.type === 'strength' ? '力量' : c.type === 'yoga' ? '瑜伽' : c.type === 'stretch' ? '拉伸' : '舞蹈'}</span>
+                    <span class="course-tag">${c.type === 'cardio' ? '有氧燃脂' : c.type === 'pilates' ? '普拉提' : c.type === 'stretch' ? '拉伸放松' : c.type === 'correction' ? '体态矫正' : c.type}</span>
                     <span class="course-tag">${c.level}</span>
                     <span class="course-tag">${c.部位}</span>
                 </div>
@@ -441,8 +442,9 @@ function initCourses() {
             </div>
             <div class="course-info">
                 <div class="course-title">${c.title}</div>
+                ${c.desc ? `<div class="course-desc">${c.desc}</div>` : ''}
                 <div class="course-meta">
-                    <span class="course-tag">${c.type === 'cardio' ? '有氧' : c.type === 'strength' ? '力量' : c.type === 'yoga' ? '瑜伽' : c.type === 'stretch' ? '拉伸' : '舞蹈'}</span>
+                    <span class="course-tag">${c.type === 'cardio' ? '有氧燃脂' : c.type === 'pilates' ? '普拉提' : c.type === 'stretch' ? '拉伸放松' : c.type === 'correction' ? '体态矫正' : c.type}</span>
                     <span class="course-tag">${c.level}</span>
                     <span class="course-tag">${c.部位}</span>
                 </div>
