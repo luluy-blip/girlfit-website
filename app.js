@@ -1,0 +1,677 @@
+/* ===== GirlFit 核心功能 ===== */
+
+// ===== 全局状态 =====
+let reminderTimer = null;
+let workoutTimer = null;
+let workoutSeconds = 180; // 3分钟
+let currentExercise = 0;
+let sedentaryStartTime = Date.now();
+let reminderCount = 0;
+let workoutCount = 0;
+
+// ===== 用户数据 =====
+let userData = {
+    age: 0,
+    height: 0,
+    weight: 0,
+    bodyFat: 0,
+    waist: 0,
+    targetWeight: 0,
+    experience: 'beginner',
+    bodyType: '',
+    healthConditions: [],
+    bmi: 0,
+    bmr: 0,
+    tdee: 0,
+    targetCalories: 0,
+};
+
+// ===== 课程数据库 =====
+const courses = [
+    // video 字段：填入B站/抖音/embed链接即可播放，留空则显示占位
+    { id: 1, title: '晨间唤醒瑜伽', type: 'yoga', level: '入门', duration: '15分钟',部位: '全身', icon: '🧘', target: ['apple', 'pear', 'hourglass'], video: '' },
+    { id: 2, title: 'Tabata燃脂 HIIT', type: 'cardio', level: '中级', duration: '20分钟',部位: '全身', icon: '🔥', target: ['apple', 'rectangle'], video: '' },
+    { id: 3, title: '蜜桃臀养成', type: 'strength', level: '初级', duration: '25分钟',部位: '臀腿', icon: '🍑', target: ['pear', 'hourglass'], video: '' },
+    { id: 4, title: '告别拜拜肉', type: 'strength', level: '入门', duration: '15分钟',部位: '手臂', icon: '💪', target: ['inverted-triangle', 'rectangle'], video: '' },
+    { id: 5, title: '马甲线速成', type: 'strength', level: '中级', duration: '30分钟',部位: '腹部', icon: '✨', target: ['apple', 'hourglass'], video: '' },
+    { id: 6, title: '饭后消食操', type: 'cardio', level: '入门', duration: '10分钟',部位: '全身', icon: '🚶', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: '' },
+    { id: 7, title: '睡前拉伸放松', type: 'stretch', level: '入门', duration: '10分钟',部位: '全身', icon: '🌙', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: '' },
+    { id: 8, title: '韩舞燃脂操', type: 'dance', level: '初级', duration: '30分钟',部位: '全身', icon: '💃', target: ['pear', 'hourglass', 'rectangle'], video: '' },
+    { id: 9, title: '办公室5分钟', type: 'cardio', level: '入门', duration: '5分钟',部位: '全身', icon: '🏢', target: ['apple', 'pear', 'hourglass', 'rectangle', 'inverted-triangle'], video: '' },
+    { id: 10, title: '背部塑形', type: 'strength', level: '初级', duration: '20分钟',部位: '背部', icon: '🏋️', target: ['inverted-triangle', 'rectangle'], video: '' },
+    { id: 11, title: '深蹲挑战30天', type: 'strength', level: '中级', duration: '15分钟',部位: '臀腿', icon: '🦵', target: ['pear', 'hourglass'], video: '' },
+    { id: 12, title: '全身燃脂舞蹈', type: 'dance', level: '初级', duration: '25分钟',部位: '全身', icon: '🎵', target: ['apple', 'rectangle', 'inverted-triangle'], video: '' },
+];
+
+// ===== 微运动动作库 =====
+const microWorkouts = [
+    [
+        { name: '颈部环绕', duration: 30 },
+        { name: '肩部耸肩', duration: 30 },
+        { name: '坐姿扭转', duration: 30 },
+        { name: '站立提踵', duration: 30 },
+        { name: '深蹲起立', duration: 30 },
+        { name: '拉伸放松', duration: 30 },
+    ],
+    [
+        { name: '手腕转动', duration: 30 },
+        { name: '猫牛式伸展', duration: 30 },
+        { name: '站立前屈', duration: 30 },
+        { name: '侧腰拉伸', duration: 30 },
+        { name: '原地踏步', duration: 30 },
+        { name: '深呼吸放松', duration: 30 },
+    ],
+    [
+        { name: '眼保健操', duration: 30 },
+        { name: '肩颈拉伸', duration: 30 },
+        { name: '转体运动', duration: 30 },
+        { name: '踮脚走路', duration: 30 },
+        { name: '弓步压腿', duration: 30 },
+        { name: '全身抖动', duration: 30 },
+    ],
+];
+
+// ===== 饮食方案数据库 =====
+const dietPlans = {
+    apple: {
+        low: { target: 1400, protein: 105, carb: 140, fat: 47 },
+        mid: { target: 1600, protein: 120, carb: 160, fat: 53 },
+        meals: {
+            breakfast: ['全麦吐司1片 + 水煮蛋2个 + 脱脂牛奶200ml + 小番茄5颗', '燕麦粥(40g燕麦+200ml牛奶) + 水煮蛋1个 + 蓝莓一小把'],
+            lunch: ['鸡胸肉100g + 糙米饭100g + 西兰花150g + 橄榄油5ml', '三文鱼80g + 荞麦面80g + 凉拌黄瓜 + 紫菜蛋花汤'],
+            dinner: ['清蒸鱼100g + 蒜蓉西兰花 + 小碗杂粮粥', '豆腐200g + 番茄蛋汤 + 清炒时蔬'],
+            snack: ['希腊酸奶100g + 坚果10g', '苹果1个 + 杏仁8颗'],
+        }
+    },
+    pear: {
+        low: { target: 1350, protein: 100, carb: 135, fat: 45 },
+        mid: { target: 1550, protein: 115, carb: 155, fat: 52 },
+        meals: {
+            breakfast: ['紫薯1个 + 水煮蛋2个 + 豆浆200ml', '杂粮馒头半个 + 鸡蛋羹 + 凉拌菠菜'],
+            lunch: ['牛肉100g + 糙米饭100g + 芦笋150g + 橄榄油5ml', '虾仁100g + 藜麦饭100g + 白灼生菜 + 冬瓜汤'],
+            dinner: ['鸡胸肉沙拉(生菜+番茄+黄瓜+鸡胸肉80g)', '清炒虾仁100g + 蒜蓉油麦菜 + 小碗小米粥'],
+            snack: ['低脂酸奶100g + 奇亚籽5g', '猕猴桃1个 + 核桃2颗'],
+        }
+    },
+    hourglass: {
+        low: { target: 1450, protein: 108, carb: 145, fat: 48 },
+        mid: { target: 1650, protein: 123, carb: 165, fat: 55 },
+        meals: {
+            breakfast: ['牛油果吐司(全麦面包+半个牛油果) + 水煮蛋1个 + 美式咖啡', '奶昔(香蕉+蛋白粉+脱脂牛奶) + 坚果10g'],
+            lunch: ['鸡腿肉去皮100g + 意面80g + 番茄酱 + 混合蔬菜', '烤三文鱼100g + 红薯100g + 沙拉'],
+            dinner: ['清蒸鲈鱼100g + 蒜蓉娃娃菜 + 杂粮米饭小碗', '牛肉炒西兰花(牛肉80g) + 紫菜汤'],
+            snack: ['蛋白棒1根', '香蕉1根 + 花生酱5g'],
+        }
+    },
+    rectangle: {
+        low: { target: 1500, protein: 112, carb: 150, fat: 50 },
+        mid: { target: 1700, protein: 127, carb: 170, fat: 57 },
+        meals: {
+            breakfast: ['燕麦煎饼(燕麦40g+鸡蛋1个) + 蜂蜜少许 + 牛奶200ml', '三明治(全麦面包+鸡蛋+生菜+番茄) + 酸奶'],
+            lunch: ['鸡胸肉120g + 藜麦饭120g + 彩椒炒牛肉丸 + 紫菜汤', '烤鸡腿去皮 + 红薯100g + 凉拌木耳'],
+            dinner: ['虾仁豆腐煲 + 清炒芥蓝 + 小碗杂粮饭', '清蒸鱼100g + 番茄蛋汤 + 蒜蓉秋葵'],
+            snack: ['全麦饼干3片 + 牛奶', '苹果1个 + 芝麻糊'],
+        }
+    },
+    'inverted-triangle': {
+        low: { target: 1400, protein: 105, carb: 140, fat: 47 },
+        mid: { target: 1600, protein: 120, carb: 160, fat: 53 },
+        meals: {
+            breakfast: ['全麦贝果半个 + 烟熏三文鱼 + 低脂奶油芝士 + 黑咖啡', '紫薯燕麦粥 + 水煮蛋2个 + 蓝莓'],
+            lunch: ['烤鸡胸100g + 糙米饭100g + 西兰花胡萝卜 + 橄榄油5ml', '牛肉丸汤面(荞麦面80g) + 凉拌海带丝'],
+            dinner: ['清蒸虾仁100g + 蒜蓉菠菜 + 小碗杂粮粥', '鸡胸肉沙拉 + 番茄蛋花汤'],
+            snack: ['希腊酸奶100g + 格兰诺拉', '橙子1个 + 杏仁8颗'],
+        }
+    },
+};
+
+// ===== 健康预警规则 =====
+function analyzeHealthRisks(data) {
+    const risks = [];
+
+    // BMI分析
+    if (data.bmi >= 28) {
+        risks.push({ level: 'high', text: 'BMI偏高（肥胖范围），建议咨询医生制定减重方案', dept: '内分泌科/营养科' });
+    } else if (data.bmi >= 24) {
+        risks.push({ level: 'mid', text: 'BMI偏高（超重范围），通过饮食+运动调整可有效改善', dept: '' });
+    }
+
+    // 腰围分析（女性）
+    if (data.waist && data.waist >= 85) {
+        risks.push({ level: 'high', text: '腰围偏大，中心性肥胖风险较高，需关注代谢健康', dept: '内分泌科' });
+    }
+
+    // 皮质醇风险（压力胖）
+    if (data.healthConditions.includes('high-pressure')) {
+        risks.push({ level: 'mid', text: '长期压力大+睡眠不好，皮质醇可能偏高，会导致腹部脂肪堆积', dept: '建议检查皮质醇水平，咨询内分泌科' });
+    }
+
+    // 胰岛素抵抗风险
+    if (data.healthConditions.includes('insulin')) {
+        risks.push({ level: 'high', text: '已确认胰岛素抵抗，减重需特别注意碳水摄入，建议低GI饮食', dept: '内分泌科' });
+    }
+
+    // PCOS风险
+    if (data.healthConditions.includes('pcos')) {
+        risks.push({ level: 'high', text: 'PCOS患者减重难度较大，需要结合药物治疗+生活方式调整', dept: '妇科/内分泌科' });
+    }
+
+    // 甲状腺风险
+    if (data.healthConditions.includes('thyroid')) {
+        risks.push({ level: 'high', text: '甲状腺功能异常会影响代谢率，减重前请确认甲功指标正常', dept: '内分泌科' });
+    }
+
+    // 关节风险
+    if (data.healthConditions.includes('knee')) {
+        risks.push({ level: 'mid', text: '有关节问题，运动需避免高冲击动作，推荐游泳/瑜伽/骑车', dept: '骨科' });
+    }
+
+    // BMI正常但体脂高（隐性肥胖）
+    if (data.bmi >= 18.5 && data.bmi < 24 && data.bodyFat >= 30) {
+        risks.push({ level: 'mid', text: 'BMI正常但体脂率偏高，属于"隐性肥胖"，需要增加力量训练', dept: '' });
+    }
+
+    return risks;
+}
+
+// ===== 导航 =====
+function toggleMobileMenu() {
+    document.querySelector('.nav-links').classList.toggle('show');
+}
+
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    // 关闭手机菜单
+    document.querySelector('.nav-links').classList.remove('show');
+}
+
+// 导航高亮
+window.addEventListener('scroll', () => {
+    const sections = ['home', 'assess', 'courses', 'diet', 'community'];
+    const scrollY = window.scrollY + 100;
+
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) {
+            const top = section.offsetTop;
+            const height = section.offsetHeight;
+            const link = document.querySelector(`.nav-link[href="#${id}"]`);
+            if (link) {
+                if (scrollY >= top && scrollY < top + height) {
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                }
+            }
+        }
+    });
+});
+
+// ===== 核心评估功能 =====
+function runAssessment() {
+    // 收集数据
+    userData.age = parseInt(document.getElementById('age').value) || 25;
+    userData.height = parseFloat(document.getElementById('height').value) || 165;
+    userData.weight = parseFloat(document.getElementById('weight').value) || 60;
+    userData.bodyFat = parseFloat(document.getElementById('bodyFat').value) || 0;
+    userData.waist = parseFloat(document.getElementById('waist').value) || 0;
+    userData.targetWeight = parseFloat(document.getElementById('targetWeight').value) || 0;
+    userData.experience = document.querySelector('input[name="experience"]:checked')?.value || 'beginner';
+    userData.bodyType = document.querySelector('input[name="bodyType"]:checked')?.value || 'apple';
+    userData.healthConditions = Array.from(document.querySelectorAll('input[name="health"]:checked')).map(cb => cb.value);
+
+    // 验证必填项
+    if (!userData.height || !userData.weight) {
+        alert('请至少填写身高和体重！');
+        return;
+    }
+
+    // 计算核心指标
+    userData.bmi = (userData.weight / Math.pow(userData.height / 100, 2)).toFixed(1);
+
+    // 基础代谢率 (Mifflin-St Jeor公式，女性)
+    userData.bmr = Math.round(10 * userData.weight + 6.25 * userData.height - 5 * userData.age - 161);
+
+    // 活动系数
+    const activityMultipliers = {
+        'beginner': 1.2,
+        'beginner-plus': 1.375,
+        'intermediate': 1.55,
+        'advanced': 1.725,
+    };
+    userData.tdee = Math.round(userData.bmr * (activityMultipliers[userData.experience] || 1.2));
+
+    // 目标热量（减脂期，TDEE减300-500）
+    userData.targetCalories = userData.tdee - 400;
+    if (userData.targetCalories < 1200) userData.targetCalories = 1200;
+
+    // 如果没设目标体重，自动设定
+    if (!userData.targetWeight) {
+        const idealBMI = 21;
+        userData.targetWeight = Math.round(idealBMI * Math.pow(userData.height / 100, 2) * 10) / 10;
+    }
+
+    // 生成结果
+    generateResults();
+}
+
+function generateResults() {
+    const panel = document.getElementById('resultPanel');
+    panel.style.display = 'block';
+
+    // 滚动到结果
+    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth' }), 100);
+
+    // BMI状态
+    let bmiStatus = '';
+    let bmiColor = '';
+    if (userData.bmi < 18.5) { bmiStatus = '偏瘦'; bmiColor = 'success'; }
+    else if (userData.bmi < 24) { bmiStatus = '正常'; bmiColor = 'success'; }
+    else if (userData.bmi < 28) { bmiStatus = '超重'; bmiColor = 'warning'; }
+    else { bmiStatus = '肥胖'; bmiColor = 'warning'; }
+
+    // 需要减多少
+    const weightToLose = Math.max(0, userData.weight - userData.targetWeight);
+    const weeksNeeded = Math.ceil(weightToLose / 0.5); // 每周减0.5kg
+
+    // 摘要
+    document.getElementById('resultSummary').innerHTML = `
+        你目前的BMI为 <strong class="${bmiColor}">${userData.bmi}</strong>（${bmiStatus}），
+        基础代谢率为 <strong>${userData.bmr}</strong> kcal/天，
+        建议每日摄入 <strong>${userData.targetCalories}</strong> kcal。
+        ${weightToLose > 0 ? `预计需要 <strong>${weeksNeeded}</strong> 周达到目标体重。` : '你的体重在健康范围内！'}
+    `;
+
+    // 身体数据
+    document.getElementById('resultBodyData').innerHTML = `
+        <div>BMI：<span class="highlight">${userData.bmi}</span>（${bmiStatus}）</div>
+        <div>基础代谢率：<span class="highlight">${userData.bmr}</span> kcal/天</div>
+        <div>每日总消耗(TDEE)：<span class="highlight">${userData.tdee}</span> kcal</div>
+        <div>建议每日摄入：<span class="highlight">${userData.targetCalories}</span> kcal</div>
+        ${userData.bodyFat ? `<div>体脂率：<span class="highlight">${userData.bodyFat}%</span></div>` : ''}
+    `;
+
+    // 目标
+    document.getElementById('resultGoal').innerHTML = `
+        <div>当前体重：<span class="highlight">${userData.weight}</span> kg</div>
+        <div>目标体重：<span class="highlight">${userData.targetWeight}</span> kg</div>
+        <div>需减重：<span class="highlight">${weightToLose.toFixed(1)}</span> kg</div>
+        <div>预计周期：<span class="highlight">${weeksNeeded}</span> 周</div>
+        <div>每周目标：减 <span class="highlight">0.5</span> kg</div>
+    `;
+
+    // 健康预警
+    const risks = analyzeHealthRisks(userData);
+    let healthHtml = '';
+    if (risks.length === 0) {
+        healthHtml = '<div class="success">暂未发现明显健康风险，请继续保持！</div>';
+    } else {
+        risks.forEach(r => {
+            const levelIcon = r.level === 'high' ? '🔴' : '🟡';
+            healthHtml += `<div style="margin-bottom:8px;">${levelIcon} <span class="${r.level === 'high' ? 'warning' : ''}">${r.text}</span>${r.dept ? `<br><small style="color:#9B9BB0;">建议科室：${r.dept}</small>` : ''}</div>`;
+        });
+    }
+    document.getElementById('resultHealth').innerHTML = healthHtml;
+
+    // 运动建议
+    const exerciseMap = {
+        'beginner': '每周3次，每次20-30分钟，以低强度有氧为主（快走、瑜伽、轻度舞蹈）',
+        'beginner-plus': '每周3-4次，每次30分钟，有氧+基础力量训练结合',
+        'intermediate': '每周4-5次，每次30-45分钟，有氧+力量训练交替进行',
+        'advanced': '每周5-6次，每次45-60分钟，高强度间歇训练+力量训练',
+    };
+    document.getElementById('resultExercise').innerHTML = `
+        <div style="margin-bottom:8px;">${exerciseMap[userData.experience]}</div>
+        <div>推荐运动类型：${getRecommendedExercises(userData.bodyType)}</div>
+    `;
+
+    // 饮食建议
+    generateDietPlan();
+
+    // 推荐课程
+    generateRecommendedCourses();
+}
+
+function getRecommendedExercises(bodyType) {
+    const map = {
+        'apple': '有氧燃脂 + 核心训练（避免过度腹部压力）',
+        'pear': '臀腿塑形 + 有氧（重点下半身力量）',
+        'hourglass': '全身均衡训练 + 柔韧性保持',
+        'rectangle': '力量增肌 + 曲线塑造',
+        'inverted-triangle': '背部+手臂塑形 + 下肢力量训练',
+    };
+    return map[bodyType] || '全身均衡训练';
+}
+
+function generateDietPlan() {
+    const plan = dietPlans[userData.bodyType] || dietPlans['apple'];
+    const usePlan = userData.targetCalories <= 1500 ? plan.low : plan.mid;
+
+    // 更新宏量营养素条
+    const total = usePlan.protein + usePlan.carb + usePlan.fat;
+    document.getElementById('proteinBar').style.width = (usePlan.protein / total * 100) + '%';
+    document.getElementById('carbBar').style.width = (usePlan.carb / total * 100) + '%';
+    document.getElementById('fatBar').style.width = (usePlan.fat / total * 100) + '%';
+    document.getElementById('proteinValue').textContent = usePlan.protein + 'g';
+    document.getElementById('carbValue').textContent = usePlan.carb + 'g';
+    document.getElementById('fatValue').textContent = usePlan.fat + 'g';
+
+    // 更新热量圆环
+    const ring = document.getElementById('calorieRing');
+    ring.style.strokeDashoffset = 314; // 全满（未进食）
+    document.getElementById('calorieConsumed').textContent = '0';
+    document.getElementById('calorieTarget').textContent = usePlan.target;
+
+    // 更新餐食建议
+    const mealKeys = ['breakfast', 'lunch', 'dinner', 'snack'];
+    const mealNames = ['早餐', '午餐', '晚餐', '加餐'];
+    mealKeys.forEach((key, i) => {
+        const contentEl = document.getElementById(key + 'Content');
+        const foods = plan.meals[key];
+        const randomFood = foods[Math.floor(Math.random() * foods.length)];
+        contentEl.innerHTML = `<div class="meal-foods">${randomFood.split('+').map(f => `<div>• ${f.trim()}</div>`).join('')}</div>`;
+    });
+
+    // 卡路里分配
+    const calSplit = [
+        Math.round(usePlan.target * 0.25),  // 早餐 25%
+        Math.round(usePlan.target * 0.35),  // 午餐 35%
+        Math.round(usePlan.target * 0.25),  // 晚餐 25%
+        Math.round(usePlan.target * 0.15),  // 加餐 15%
+    ];
+    document.getElementById('breakfastCal').textContent = `~${calSplit[0]} kcal`;
+    document.getElementById('lunchCal').textContent = `~${calSplit[1]} kcal`;
+    document.getElementById('dinnerCal').textContent = `~${calSplit[2]} kcal`;
+    document.getElementById('snackCal').textContent = `~${calSplit[3]} kcal`;
+}
+
+function generateRecommendedCourses() {
+    const courseList = document.getElementById('courseList');
+    const recommended = courses.filter(c => c.target.includes(userData.bodyType)).slice(0, 6);
+
+    courseList.innerHTML = recommended.map(c => `
+        <div class="mini-course" onclick="${c.video ? `playVideo('${c.video}','${c.title}')` : `alert('🎬 视频即将上线！\\n\\n课程：${c.title}\\n时长：${c.duration}\\n难度：${c.level}')`}">
+            <div class="mini-course-icon">${c.icon}</div>
+            <div class="mini-course-title">${c.title}</div>
+            <div class="mini-course-meta">${c.duration} · ${c.level} · ${c.部位}</div>
+        </div>
+    `).join('');
+}
+
+function resetAssessment() {
+    document.getElementById('resultPanel').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== 课程筛选 =====
+function filterCourses(type, el) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (el) el.classList.add('active');
+    else event.target.classList.add('active');
+
+    const grid = document.getElementById('coursesGrid');
+    const filtered = type === 'all' ? courses : courses.filter(c => c.type === type);
+
+    grid.innerHTML = filtered.map(c => `
+        <div class="course-card" onclick="${c.video ? `playVideo('${c.video}','${c.title}')` : `alert('🎬 视频即将上线！\\n\\n课程：${c.title}\\n时长：${c.duration}\\n难度：${c.level}')`}">
+            <div class="course-thumb">
+                ${c.icon}
+                <span class="course-duration">${c.duration}</span>
+            </div>
+            <div class="course-info">
+                <div class="course-title">${c.title}</div>
+                <div class="course-meta">
+                    <span class="course-tag">${c.type === 'cardio' ? '有氧' : c.type === 'strength' ? '力量' : c.type === 'yoga' ? '瑜伽' : c.type === 'stretch' ? '拉伸' : '舞蹈'}</span>
+                    <span class="course-tag">${c.level}</span>
+                    <span class="course-tag">${c.部位}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 初始化课程列表
+function initCourses() {
+    const grid = document.getElementById('coursesGrid');
+    if (!grid) return;
+    grid.innerHTML = courses.map(c => `
+        <div class="course-card" onclick="${c.video ? `playVideo('${c.video}','${c.title}')` : `alert('🎬 视频即将上线！\\n\\n课程：${c.title}\\n时长：${c.duration}\\n难度：${c.level}')`}">
+            <div class="course-thumb">
+                ${c.icon}
+                <span class="course-duration">${c.duration}</span>
+            </div>
+            <div class="course-info">
+                <div class="course-title">${c.title}</div>
+                <div class="course-meta">
+                    <span class="course-tag">${c.type === 'cardio' ? '有氧' : c.type === 'strength' ? '力量' : c.type === 'yoga' ? '瑜伽' : c.type === 'stretch' ? '拉伸' : '舞蹈'}</span>
+                    <span class="course-tag">${c.level}</span>
+                    <span class="course-tag">${c.部位}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== 食物拍照识别（模拟） =====
+function handleFoodPhoto(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const resultDiv = document.getElementById('foodResult');
+    const identifiedDiv = document.getElementById('foodIdentified');
+    const caloriesDiv = document.getElementById('foodCalories');
+
+    // 模拟AI识别
+    identifiedDiv.textContent = '🔍 正在识别...';
+    caloriesDiv.textContent = '';
+    resultDiv.style.display = 'block';
+
+    setTimeout(() => {
+        // 模拟识别结果
+        const foods = [
+            { name: '鸡胸肉沙拉', calories: 320, protein: 28, carb: 15, fat: 16 },
+            { name: '番茄炒蛋配米饭', calories: 450, protein: 18, carb: 65, fat: 12 },
+            { name: '牛肉面', calories: 520, protein: 25, carb: 70, fat: 14 },
+            { name: '水果酸奶碗', calories: 280, protein: 12, carb: 45, fat: 6 },
+            { name: '三明治', calories: 380, protein: 20, carb: 42, fat: 14 },
+        ];
+        const detected = foods[Math.floor(Math.random() * foods.length)];
+
+        identifiedDiv.innerHTML = `✅ 识别结果：<strong>${detected.name}</strong>`;
+        caloriesDiv.innerHTML = `
+            预估热量：<strong>${detected.calories} kcal</strong><br>
+            蛋白质 ${detected.protein}g · 碳水 ${detected.carb}g · 脂肪 ${detected.fat}g
+        `;
+    }, 1500);
+}
+
+// ===== 久坐提醒功能 =====
+function startReminder() {
+    if (reminderTimer) {
+        clearInterval(reminderTimer);
+    }
+
+    const interval = parseInt(document.getElementById('reminderInterval').value) * 60 * 1000;
+    sedentaryStartTime = Date.now();
+
+    reminderTimer = setInterval(() => {
+        reminderCount++;
+        document.getElementById('reminderCount').textContent = reminderCount;
+        showReminderModal();
+    }, interval);
+
+    // 更新状态
+    document.querySelector('.status-dot').classList.add('active');
+    document.getElementById('statusText').textContent = `已启动 · 每${document.getElementById('reminderInterval').value}分钟提醒`;
+
+    alert('久坐提醒已启动！\n\n每隔' + document.getElementById('reminderInterval').value + '分钟会弹出提醒。');
+}
+
+function stopReminder() {
+    if (reminderTimer) {
+        clearInterval(reminderTimer);
+        reminderTimer = null;
+    }
+    document.querySelector('.status-dot').classList.remove('active');
+    document.getElementById('statusText').textContent = '已停止';
+}
+
+function showReminderModal() {
+    const modal = document.getElementById('reminderModal');
+    const sedentaryMins = Math.floor((Date.now() - sedentaryStartTime) / 60000);
+    document.getElementById('sedentaryMinutes').textContent = sedentaryMins;
+    modal.style.display = 'flex';
+
+    // 尝试播放提示音
+    if (document.getElementById('soundToggle').checked) {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            gainNode.gain.value = 0.3;
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 200);
+        } catch (e) { }
+    }
+
+    // 尝试浏览器通知
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('GirlFit 久坐提醒', {
+            body: `你已经坐了${sedentaryMins}分钟啦！站起来动一动吧～`,
+            icon: '💪',
+        });
+    }
+}
+
+function closeReminderModal() {
+    document.getElementById('reminderModal').style.display = 'none';
+    document.getElementById('popupWorkout').style.display = 'none';
+}
+
+function snoozeReminder() {
+    closeReminderModal();
+    // 5分钟后再提醒
+    setTimeout(showReminderModal, 5 * 60 * 1000);
+}
+
+function startPopupWorkout() {
+    const popupWorkout = document.getElementById('popupWorkout');
+    popupWorkout.style.display = 'block';
+
+    const workoutSet = microWorkouts[Math.floor(Math.random() * microWorkouts.length)];
+    let exerciseIndex = 0;
+
+    function showExercise() {
+        if (exerciseIndex >= workoutSet.length) {
+            popupWorkout.style.display = 'none';
+            closeReminderModal();
+            workoutCount++;
+            document.getElementById('workoutCount').textContent = workoutCount;
+            document.getElementById('activeTime').textContent = parseInt(document.getElementById('activeTime').textContent) + 3;
+            return;
+        }
+
+        const ex = workoutSet[exerciseIndex];
+        document.getElementById('popupExerciseName').textContent = ex.name;
+        let countdown = ex.duration;
+
+        const timer = setInterval(() => {
+            document.getElementById('popupExerciseTimer').textContent = countdown + 's';
+            countdown--;
+            if (countdown < 0) {
+                clearInterval(timer);
+                exerciseIndex++;
+                showExercise();
+            }
+        }, 1000);
+    }
+
+    showExercise();
+}
+
+// ===== 主页面微运动 =====
+function startWorkout() {
+    if (workoutTimer) {
+        clearInterval(workoutTimer);
+        workoutTimer = null;
+        document.querySelector('#workoutTimer .timer-display').textContent = '03:00';
+        document.querySelectorAll('.exercise-item').forEach(el => el.classList.remove('active'));
+        return;
+    }
+
+    const workoutSet = microWorkouts[0]; // 使用第一组
+    let totalSeconds = workoutSet.reduce((sum, ex) => sum + ex.duration, 0);
+    let currentExIndex = 0;
+    let exCountdown = workoutSet[0].duration;
+
+    workoutTimer = setInterval(() => {
+        totalSeconds--;
+        exCountdown--;
+
+        // 更新总时间
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        document.querySelector('#workoutTimer .timer-display').textContent =
+            String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+        // 高亮当前动作
+        document.querySelectorAll('.exercise-item').forEach((el, i) => {
+            el.classList.toggle('active', i === currentExIndex);
+        });
+
+        // 当前动作倒计时
+        if (exCountdown <= 0) {
+            currentExIndex++;
+            if (currentExIndex < workoutSet.length) {
+                exCountdown = workoutSet[currentExIndex].duration;
+            }
+        }
+
+        if (totalSeconds <= 0) {
+            clearInterval(workoutTimer);
+            workoutTimer = null;
+            workoutCount++;
+            document.getElementById('workoutCount').textContent = workoutCount;
+            document.getElementById('activeTime').textContent = parseInt(document.getElementById('activeTime').textContent) + 3;
+            document.querySelector('#workoutTimer .timer-display').textContent = '03:00';
+            document.querySelectorAll('.exercise-item').forEach(el => el.classList.remove('active'));
+            alert('🎉 恭喜完成本次微运动！\n坚持就是胜利！');
+        }
+    }, 1000);
+}
+
+// ===== 久坐计时器（模拟） =====
+function startSedentaryTracker() {
+    setInterval(() => {
+        const mins = Math.floor((Date.now() - sedentaryStartTime) / 60000);
+        document.getElementById('sedentaryTime').textContent = mins;
+    }, 60000);
+}
+
+// ===== 页面初始化 =====
+document.addEventListener('DOMContentLoaded', () => {
+    initCourses();
+    startSedentaryTracker();
+
+    // 请求通知权限
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+
+    // 滚动动画
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .course-card, .post-card').forEach(el => {
+        el.classList.add('fade-in');
+        observer.observe(el);
+    });
+});
