@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>GirlFit - 女孩专属智能健身平台</title>
     <meta name="description" content="专为中国女孩打造的AI驱动减肥健身助手">
     <meta name="theme-color" content="#FF6B9D">
@@ -16,592 +16,559 @@
 </head>
 <body>
 
-<!-- ===== 导航栏 ===== -->
-<nav class="navbar">
+<!-- ===== 顶部导航栏（桌面端保留） ===== -->
+<nav class="navbar desktop-only">
     <div class="nav-container">
         <div class="logo">
             <span class="logo-icon">💪</span>
             <span class="logo-text">GirlFit</span>
         </div>
         <div class="nav-links">
-            <a href="#home" class="nav-link active">首页</a>
-            <a href="#assess" class="nav-link">开始评估</a>
-            <a href="#courses" class="nav-link">课程推荐</a>
-            <a href="#diet" class="nav-link">饮食管理</a>
-            <a href="#community" class="nav-link">女孩圈</a>
+            <a href="#" class="nav-link active" onclick="switchTab('home', event)">首页</a>
+            <a href="#" class="nav-link" onclick="switchTab('courses', event)">课程推荐</a>
+            <a href="#" class="nav-link" onclick="switchTab('records', event)">记录</a>
+            <a href="#" class="nav-link" onclick="switchTab('plan', event)">计划</a>
+            <a href="#" class="nav-link" onclick="switchTab('profile', event)">我的</a>
         </div>
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
     </div>
 </nav>
 
-<!-- ===== 首页 ===== -->
-<section id="home" class="hero">
-    <div class="hero-content">
-        <div class="hero-badge">✨ 专为中国女孩打造</div>
-        <h1 class="hero-title">科学减肥<br>从了解自己开始</h1>
-        <p class="hero-subtitle">AI智能评估 × 个性化课程 × 饮食管理 × 久坐提醒<br>一站式解决你的减肥困惑</p>
-        <button class="btn btn-primary btn-lg" onclick="scrollToSection('assess')">
-            开始我的蜕变之旅 →
-        </button>
-        <div class="hero-stats">
-            <div class="stat-item">
-                <div class="stat-number">12,847</div>
-                <div class="stat-label">女孩已加入</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">98%</div>
-                <div class="stat-label">满意度</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">3,200+</div>
-                <div class="stat-label">跟练视频</div>
-            </div>
-        </div>
-    </div>
-    <div class="hero-visual">
-        <div class="floating-card card-1">🥗 健康饮食</div>
-        <div class="floating-card card-2">🏋️ 科学训练</div>
-        <div class="floating-card card-3">📊 数据追踪</div>
-        <div class="floating-card card-4">⏰ 久坐提醒</div>
-    </div>
-</section>
+<!-- ===== 主内容区域 ===== -->
+<main class="app-main">
 
-<!-- ===== 功能介绍 ===== -->
-<section class="features">
-    <div class="container">
-        <h2 class="section-title">四大核心功能</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3>AI体型评估</h3>
-                <p>输入身体数据，AI自动分析你的体型、BMI、基础代谢率，生成专属减肥方案</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎬</div>
-                <h3>智能课程推荐</h3>
-                <p>3200+跟练视频按体型、强度、部位精准匹配，告别到处找教程的烦恼</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⏰</div>
-                <h3>久坐提醒</h3>
-                <p>每30分钟弹出微运动提醒，3-5分钟碎片化跟练，轻松养成运动习惯</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🍎</div>
-                <h3>饮食管理</h3>
-                <p>AI定制三餐方案 + 拍照识热量，科学控制摄入，吃得开心瘦得健康</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== AI评估 ===== -->
-<section id="assess" class="section">
-    <div class="container">
-        <h2 class="section-title">AI智能评估</h2>
-        <p class="section-subtitle">填写以下信息，AI将为你生成专属的减肥方案</p>
-
-        <div class="assess-form">
-            <!-- 步骤1：基本信息 -->
-            <div class="form-step" id="step1">
-                <div class="step-header">
-                    <span class="step-num">1</span>
-                    <h3>基本信息</h3>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>年龄</label>
-                        <input type="number" id="age" placeholder="例如：25" min="12" max="65">
-                    </div>
-                    <div class="form-group">
-                        <label>身高 (cm)</label>
-                        <input type="number" id="height" placeholder="例如：165" min="100" max="220">
-                    </div>
-                    <div class="form-group">
-                        <label>体重 (kg)</label>
-                        <input type="number" id="weight" placeholder="例如：60" min="30" max="200" step="0.1">
-                    </div>
-                    <div class="form-group">
-                        <label>体脂率 (%) <span class="optional">选填</span></label>
-                        <input type="number" id="bodyFat" placeholder="例如：28" min="5" max="60" step="0.1">
-                    </div>
-                    <div class="form-group">
-                        <label>腰围 (cm) <span class="optional">选填</span></label>
-                        <input type="number" id="waist" placeholder="例如：75" min="40" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>目标体重 (kg) <span class="optional">选填</span></label>
-                        <input type="number" id="targetWeight" placeholder="例如：55" min="30" max="200" step="0.1">
-                    </div>
-                </div>
-                <div class="form-group full-width">
-                    <label>运动经验</label>
-                    <div class="radio-group">
-                        <label class="radio-card">
-                            <input type="radio" name="experience" value="beginner" checked>
-                            <span class="radio-label">🌱 小白<br><small>几乎不运动</small></span>
-                        </label>
-                        <label class="radio-card">
-                            <input type="radio" name="experience" value="beginner-plus">
-                            <span class="radio-label">🌿 入门<br><small>偶尔运动</small></span>
-                        </label>
-                        <label class="radio-card">
-                            <input type="radio" name="experience" value="intermediate">
-                            <span class="radio-label">🌳 进阶<br><small>规律运动</small></span>
-                        </label>
-                        <label class="radio-card">
-                            <input type="radio" name="experience" value="advanced">
-                            <span class="radio-label">🌲 高级<br><small>长期健身</small></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 步骤2：体型选择 -->
-            <div class="form-step" id="step2">
-                <div class="step-header">
-                    <span class="step-num">2</span>
-                    <h3>选择你的体型</h3>
-                </div>
-                <div class="body-type-grid">
-                    <label class="body-type-card" data-type="apple">
-                        <input type="radio" name="bodyType" value="apple">
-                        <div class="body-type-content">
-                            <div class="body-type-shape apple-shape"></div>
-                            <div class="body-type-name">🍎 苹果型</div>
-                            <div class="body-type-desc">腰腹丰满，四肢较细</div>
-                        </div>
-                    </label>
-                    <label class="body-type-card" data-type="pear">
-                        <input type="radio" name="bodyType" value="pear">
-                        <div class="body-type-content">
-                            <div class="body-type-shape pear-shape"></div>
-                            <div class="body-type-name">🍐 梨型</div>
-                            <div class="body-type-desc">臀腿丰满，上身纤细</div>
-                        </div>
-                    </label>
-                    <label class="body-type-card" data-type="hourglass">
-                        <input type="radio" name="bodyType" value="hourglass">
-                        <div class="body-type-content">
-                            <div class="body-type-shape hourglass-shape"></div>
-                            <div class="body-type-name">⏳ 沙漏型</div>
-                            <div class="body-type-desc">腰细臀宽，曲线匀称</div>
-                        </div>
-                    </label>
-                    <label class="body-type-card" data-type="rectangle">
-                        <input type="radio" name="bodyType" value="rectangle">
-                        <div class="body-type-content">
-                            <div class="body-type-shape rectangle-shape"></div>
-                            <div class="body-type-name">📏 矩形型</div>
-                            <div class="body-type-desc">上下均匀，曲线不明显</div>
-                        </div>
-                    </label>
-                    <label class="body-type-card" data-type="inverted-triangle">
-                        <input type="radio" name="bodyType" value="inverted-triangle">
-                        <div class="body-type-content">
-                            <div class="body-type-shape triangle-shape"></div>
-                            <div class="body-type-name">🔺 倒三角型</div>
-                            <div class="body-type-desc">肩宽上身壮，臀腿纤细</div>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <!-- 步骤3：健康状况 -->
-            <div class="form-step" id="step3">
-                <div class="step-header">
-                    <span class="step-num">3</span>
-                    <h3>健康状况（选填）</h3>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group full-width">
-                        <label>是否有以下情况？</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="health" value="pcos">
-                                <span>多囊卵巢综合征（PCOS）</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="health" value="thyroid">
-                                <span>甲状腺功能异常</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="health" value="insulin">
-                                <span>胰岛素抵抗</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="health" value="knee">
-                                <span>膝盖/关节问题</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="health" value="high-pressure">
-                                <span>工作压力大/睡眠不好</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button class="btn btn-primary btn-lg btn-full" onclick="runAssessment()">
-                🔍 生成我的专属方案
-            </button>
-        </div>
-
-        <!-- 评估结果 -->
-        <div class="result-panel" id="resultPanel" style="display:none;">
-            <div class="result-header">
-                <h2>🌟 你的专属评估报告</h2>
-                <p id="resultSummary"></p>
-            </div>
-
-            <div class="result-grid">
-                <div class="result-card">
-                    <div class="result-card-icon">📊</div>
-                    <h4>身体数据</h4>
-                    <div class="result-data" id="resultBodyData"></div>
-                </div>
-                <div class="result-card">
-                    <div class="result-card-icon">🎯</div>
-                    <h4>减肥目标</h4>
-                    <div class="result-data" id="resultGoal"></div>
-                </div>
-                <div class="result-card">
-                    <div class="result-card-icon">⚠️</div>
-                    <h4>健康预警</h4>
-                    <div class="result-data" id="resultHealth"></div>
-                </div>
-                <div class="result-card">
-                    <div class="result-card-icon">💪</div>
-                    <h4>运动建议</h4>
-                    <div class="result-data" id="resultExercise"></div>
-                </div>
-            </div>
-
-            <div class="result-diet" id="resultDiet">
-                <h3>🍽️ 今日饮食建议</h3>
-                <div class="diet-plan" id="dietPlan"></div>
-            </div>
-
-            <div class="result-courses" id="resultCourses">
-                <h3>🎬 推荐跟练课程</h3>
-                <div class="course-list" id="courseList"></div>
-            </div>
-
-            <button class="btn btn-secondary" onclick="resetAssessment()" style="margin-top:20px;">
-                重新评估
-            </button>
-        </div>
-    </div>
-</section>
-
-<!-- ===== 课程推荐 ===== -->
-<section id="courses" class="section section-alt">
-    <div class="container">
-        <h2 class="section-title">智能课程推荐</h2>
-        <p class="section-subtitle">根据你的体型和目标，AI为你精选最佳跟练视频</p>
-
-        <div class="course-filters">
-            <button class="filter-btn active" onclick="filterCourses('all', this)">全部</button>
-            <button class="filter-btn" onclick="filterCourses('cardio', this)">有氧</button>
-            <button class="filter-btn" onclick="filterCourses('strength', this)">力量</button>
-            <button class="filter-btn" onclick="filterCourses('yoga', this)">瑜伽</button>
-            <button class="filter-btn" onclick="filterCourses('stretch', this)">拉伸</button>
-            <button class="filter-btn" onclick="filterCourses('dance', this)">舞蹈</button>
-        </div>
-
-        <div class="courses-grid" id="coursesGrid">
-            <!-- JS 动态生成 -->
-        </div>
-
-        <div class="course-cta">
-            <p>完成评估后，AI会为你推荐最适合的课程组合</p>
-            <button class="btn btn-primary" onclick="scrollToSection('assess')">去评估 →</button>
-        </div>
-    </div>
-</section>
-
-<!-- ===== 饮食管理 ===== -->
-<section id="diet" class="section">
-    <div class="container">
-        <h2 class="section-title">饮食管理助手</h2>
-        <p class="section-subtitle">AI定制你的每日饮食方案，吃得开心瘦得健康</p>
-
-        <div class="diet-dashboard">
-            <div class="calorie-summary">
-                <div class="calorie-ring">
-                    <svg viewBox="0 0 120 120">
-                        <circle cx="60" cy="60" r="50" class="ring-bg"/>
-                        <circle cx="60" cy="60" r="50" class="ring-fill" id="calorieRing"/>
-                    </svg>
-                    <div class="calorie-text">
-                        <div class="calorie-consumed" id="calorieConsumed">0</div>
-                        <div class="calorie-label">/ <span id="calorieTarget">1500</span> kcal</div>
-                    </div>
-                </div>
-                <div class="calorie-details">
-                    <div class="macro-item">
-                        <div class="macro-bar protein-bar" style="width:0%" id="proteinBar"></div>
-                        <span class="macro-name">蛋白质</span>
-                        <span class="macro-value" id="proteinValue">0g</span>
-                    </div>
-                    <div class="macro-item">
-                        <div class="macro-bar carb-bar" style="width:0%" id="carbBar"></div>
-                        <span class="macro-name">碳水</span>
-                        <span class="macro-value" id="carbValue">0g</span>
-                    </div>
-                    <div class="macro-item">
-                        <div class="macro-bar fat-bar" style="width:0%" id="fatBar"></div>
-                        <span class="macro-name">脂肪</span>
-                        <span class="macro-value" id="fatValue">0g</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="meal-cards">
-                <div class="meal-card">
-                    <div class="meal-icon">🌅</div>
-                    <h4>早餐</h4>
-                    <div class="meal-content" id="breakfastContent">
-                        <p class="meal-placeholder">完成评估后获取推荐</p>
-                    </div>
-                    <div class="meal-calories" id="breakfastCal">~350 kcal</div>
-                </div>
-                <div class="meal-card">
-                    <div class="meal-icon">☀️</div>
-                    <h4>午餐</h4>
-                    <div class="meal-content" id="lunchContent">
-                        <p class="meal-placeholder">完成评估后获取推荐</p>
-                    </div>
-                    <div class="meal-calories" id="lunchCal">~500 kcal</div>
-                </div>
-                <div class="meal-card">
-                    <div class="meal-icon">🌙</div>
-                    <h4>晚餐</h4>
-                    <div class="meal-content" id="dinnerContent">
-                        <p class="meal-placeholder">完成评估后获取推荐</p>
-                    </div>
-                    <div class="meal-calories" id="dinnerCal">~400 kcal</div>
-                </div>
-                <div class="meal-card">
-                    <div class="meal-icon">🧁</div>
-                    <h4>加餐</h4>
-                    <div class="meal-content" id="snackContent">
-                        <p class="meal-placeholder">完成评估后获取推荐</p>
-                    </div>
-                    <div class="meal-calories" id="snackCal">~250 kcal</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="upload-area" id="foodUpload">
-            <div class="upload-icon">📸</div>
-            <h4>拍照识别热量</h4>
-            <p>上传你的餐食照片，AI帮你估算热量</p>
-            <input type="file" id="foodPhoto" accept="image/*" onchange="handleFoodPhoto(event)" style="display:none">
-            <button class="btn btn-outline" onclick="document.getElementById('foodPhoto').click()">
-                选择照片
-            </button>
-            <div class="food-result" id="foodResult" style="display:none;">
-                <div class="food-identified" id="foodIdentified"></div>
-                <div class="food-calories" id="foodCalories"></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== 久坐提醒 ===== -->
-<section class="section section-alt">
-    <div class="container">
-        <h2 class="section-title">久坐提醒 & 微运动</h2>
-        <p class="section-subtitle">每30分钟提醒你动一动，碎片时间也能瘦</p>
-
-        <div class="reminder-dashboard">
-            <div class="reminder-settings">
-                <h3>提醒设置</h3>
-                <div class="setting-item">
-                    <label>提醒间隔</label>
-                    <select id="reminderInterval">
-                        <option value="15">15分钟</option>
-                        <option value="30" selected>30分钟</option>
-                        <option value="45">45分钟</option>
-                        <option value="60">60分钟</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <label>活跃时段</label>
-                    <div class="time-range">
-                        <input type="time" id="activeStart" value="09:00">
-                        <span>至</span>
-                        <input type="time" id="activeEnd" value="22:00">
-                    </div>
-                </div>
-                <div class="setting-item">
-                    <label>提醒声音</label>
-                    <label class="toggle">
-                        <input type="checkbox" id="soundToggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <button class="btn btn-primary" onclick="startReminder()">
-                    ▶️ 开始提醒
+    <!-- ===== Tab: 首页 ===== -->
+    <div class="tab-page active" id="page-home">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">✨ 专为中国女孩打造</div>
+                <h1 class="hero-title">科学减肥<br>从了解自己开始</h1>
+                <p class="hero-subtitle">AI智能评估 × 个性化课程 × 饮食管理 × 久坐提醒<br>一站式解决你的减肥困惑</p>
+                <button class="btn btn-primary btn-lg" onclick="switchTab('assess')">
+                    开始我的蜕变之旅 →
                 </button>
-                <button class="btn btn-secondary" onclick="stopReminder()" style="margin-top:8px;">
-                    ⏹️ 停止提醒
-                </button>
-                <div class="reminder-status" id="reminderStatus">
-                    <span class="status-dot"></span>
-                    <span id="statusText">未启动</span>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">12,847</div>
+                        <div class="stat-label">女孩已加入</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">满意度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">3,200+</div>
+                        <div class="stat-label">跟练视频</div>
+                    </div>
                 </div>
             </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">🥗 健康饮食</div>
+                <div class="floating-card card-2">🏋️ 科学训练</div>
+                <div class="floating-card card-3">📊 数据追踪</div>
+                <div class="floating-card card-4">⏰ 久坐提醒</div>
+            </div>
+        </section>
 
-            <div class="micro-workout">
-                <h3>🔥 今日微运动</h3>
-                <div class="workout-timer" id="workoutTimer">
-                    <div class="timer-display" id="timerDisplay">03:00</div>
-                    <div class="timer-label">3分钟久坐唤醒操</div>
-                </div>
-                <div class="workout-exercises" id="workoutExercises">
-                    <div class="exercise-item">
-                        <span class="exercise-num">1</span>
-                        <span class="exercise-name">颈部环绕</span>
-                        <span class="exercise-duration">30秒</span>
+        <!-- 功能介绍 -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">四大核心功能</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>AI体型评估</h3>
+                        <p>输入身体数据，AI自动分析你的体型、BMI、基础代谢率，生成专属减肥方案</p>
                     </div>
-                    <div class="exercise-item">
-                        <span class="exercise-num">2</span>
-                        <span class="exercise-name">肩部耸肩</span>
-                        <span class="exercise-duration">30秒</span>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎬</div>
+                        <h3>智能课程推荐</h3>
+                        <p>3200+跟练视频按体型、强度、部位精准匹配，告别到处找教程的烦恼</p>
                     </div>
-                    <div class="exercise-item">
-                        <span class="exercise-num">3</span>
-                        <span class="exercise-name">坐姿扭转</span>
-                        <span class="exercise-duration">30秒</span>
+                    <div class="feature-card">
+                        <div class="feature-icon">⏰</div>
+                        <h3>久坐提醒</h3>
+                        <p>每30分钟弹出微运动提醒，3-5分钟碎片化跟练，轻松养成运动习惯</p>
                     </div>
-                    <div class="exercise-item">
-                        <span class="exercise-num">4</span>
-                        <span class="exercise-name">站立提踵</span>
-                        <span class="exercise-duration">30秒</span>
-                    </div>
-                    <div class="exercise-item">
-                        <span class="exercise-num">5</span>
-                        <span class="exercise-name">深蹲起立</span>
-                        <span class="exercise-duration">30秒</span>
-                    </div>
-                    <div class="exercise-item">
-                        <span class="exercise-num">6</span>
-                        <span class="exercise-name">拉伸放松</span>
-                        <span class="exercise-duration">30秒</span>
+                    <div class="feature-card">
+                        <div class="feature-icon">🍎</div>
+                        <h3>饮食管理</h3>
+                        <p>AI定制三餐方案 + 拍照识热量，科学控制摄入，吃得开心瘦得健康</p>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-full" onclick="startWorkout()">
-                    🏃 开始跟练
-                </button>
             </div>
-        </div>
+        </section>
 
-        <div class="reminder-stats">
-            <h3>📊 今日数据</h3>
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-card-number" id="reminderCount">0</div>
-                    <div class="stat-card-label">提醒次数</div>
+        <!-- 久坐提醒 -->
+        <section class="section section-alt">
+            <div class="container">
+                <h2 class="section-title">久坐提醒 & 微运动</h2>
+                <p class="section-subtitle">每30分钟提醒你动一动，碎片时间也能瘦</p>
+
+                <div class="reminder-dashboard">
+                    <div class="reminder-settings">
+                        <h3>提醒设置</h3>
+                        <div class="setting-item">
+                            <label>提醒间隔</label>
+                            <select id="reminderInterval">
+                                <option value="15">15分钟</option>
+                                <option value="30" selected>30分钟</option>
+                                <option value="45">45分钟</option>
+                                <option value="60">60分钟</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>活跃时段</label>
+                            <div class="time-range">
+                                <input type="time" id="activeStart" value="09:00">
+                                <span>至</span>
+                                <input type="time" id="activeEnd" value="22:00">
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <label>提醒声音</label>
+                            <label class="toggle">
+                                <input type="checkbox" id="soundToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" onclick="startReminder()">▶️ 开始提醒</button>
+                        <button class="btn btn-secondary" onclick="stopReminder()" style="margin-top:8px;">⏹️ 停止提醒</button>
+                        <div class="reminder-status" id="reminderStatus">
+                            <span class="status-dot"></span>
+                            <span id="statusText">未启动</span>
+                        </div>
+                    </div>
+
+                    <div class="micro-workout">
+                        <h3>🔥 今日微运动</h3>
+                        <div class="workout-timer" id="workoutTimer">
+                            <div class="timer-display" id="timerDisplay">03:00</div>
+                            <div class="timer-label">3分钟久坐唤醒操</div>
+                        </div>
+                        <div class="workout-exercises" id="workoutExercises">
+                            <div class="exercise-item"><span class="exercise-num">1</span><span class="exercise-name">颈部环绕</span><span class="exercise-duration">30秒</span></div>
+                            <div class="exercise-item"><span class="exercise-num">2</span><span class="exercise-name">肩部耸肩</span><span class="exercise-duration">30秒</span></div>
+                            <div class="exercise-item"><span class="exercise-num">3</span><span class="exercise-name">坐姿扭转</span><span class="exercise-duration">30秒</span></div>
+                            <div class="exercise-item"><span class="exercise-num">4</span><span class="exercise-name">站立提踵</span><span class="exercise-duration">30秒</span></div>
+                            <div class="exercise-item"><span class="exercise-num">5</span><span class="exercise-name">深蹲起立</span><span class="exercise-duration">30秒</span></div>
+                            <div class="exercise-item"><span class="exercise-num">6</span><span class="exercise-name">拉伸放松</span><span class="exercise-duration">30秒</span></div>
+                        </div>
+                        <button class="btn btn-primary btn-full" onclick="startWorkout()">🏃 开始跟练</button>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-card-number" id="workoutCount">0</div>
-                    <div class="stat-card-label">完成跟练</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-card-number" id="sedentaryTime">0</div>
-                    <div class="stat-card-label">久坐时长(分钟)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-card-number" id="activeTime">0</div>
-                    <div class="stat-card-label">活动时长(分钟)</div>
+
+                <div class="reminder-stats">
+                    <h3>📊 今日数据</h3>
+                    <div class="stats-row">
+                        <div class="stat-card"><div class="stat-card-number" id="reminderCount">0</div><div class="stat-card-label">提醒次数</div></div>
+                        <div class="stat-card"><div class="stat-card-number" id="workoutCount">0</div><div class="stat-card-label">完成跟练</div></div>
+                        <div class="stat-card"><div class="stat-card-number" id="sedentaryTime">0</div><div class="stat-card-label">久坐时长(分钟)</div></div>
+                        <div class="stat-card"><div class="stat-card-number" id="activeTime">0</div><div class="stat-card-label">活动时长(分钟)</div></div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- 社区 -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">女孩圈</h2>
+                <p class="section-subtitle">和姐妹们一起分享、鼓励、变美</p>
+                <div class="community-feed">
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-avatar">🌸</div>
+                            <div class="post-info"><div class="post-name">匿名樱花</div><div class="post-time">2小时前</div></div>
+                            <span class="post-tag">打卡</span>
+                        </div>
+                        <div class="post-content">今天完成了第一次30分钟有氧训练！虽然中间休息了好几次，但是坚持下来了！感觉整个人都轻松了～继续加油💪</div>
+                        <div class="post-actions">
+                            <button class="post-action">❤️ 128</button>
+                            <button class="post-action">💬 23</button>
+                            <button class="post-action">⭐ 收藏</button>
+                        </div>
+                    </div>
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-avatar">🌻</div>
+                            <div class="post-info"><div class="post-name">向日葵少女</div><div class="post-time">5小时前</div></div>
+                            <span class="post-tag">食谱</span>
+                        </div>
+                        <div class="post-content">分享今天的减脂午餐：藜麦鸡胸肉沙拉🥗 鸡胸肉用黑胡椒腌制，搭配牛油果和小番茄，好吃又饱腹！热量大概420大卡，蛋白质35g～</div>
+                        <div class="post-actions">
+                            <button class="post-action">❤️ 256</button>
+                            <button class="post-action">💬 45</button>
+                            <button class="post-action">⭐ 收藏</button>
+                        </div>
+                    </div>
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-avatar">🌺</div>
+                            <div class="post-info"><div class="post-name">逆袭小辣椒</div><div class="post-time">1天前</div></div>
+                            <span class="post-tag">经验分享</span>
+                        </div>
+                        <div class="post-content">姐妹们！我终于突破平台期了！之前卡在58kg整整两周，按照AI推荐的方案调整了饮食结构（增加了蛋白质比例），一周就掉了1.2kg！果然科学减肥才是王道！</div>
+                        <div class="post-actions">
+                            <button class="post-action">❤️ 512</button>
+                            <button class="post-action">💬 89</button>
+                            <button class="post-action">⭐ 收藏</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</section>
 
-<!-- ===== 女孩圈社区 ===== -->
-<section id="community" class="section">
-    <div class="container">
-        <h2 class="section-title">女孩圈</h2>
-        <p class="section-subtitle">和姐妹们一起分享、鼓励、变美</p>
+    <!-- ===== Tab: 课程 ===== -->
+    <div class="tab-page" id="page-courses">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">智能课程推荐</h2>
+                <p class="section-subtitle">根据你的体型和目标，AI为你精选最佳跟练视频</p>
 
-        <div class="community-feed">
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-avatar">🌸</div>
-                    <div class="post-info">
-                        <div class="post-name">匿名樱花</div>
-                        <div class="post-time">2小时前</div>
+                <div class="course-filters">
+                    <button class="filter-btn active" onclick="filterCourses('all', this)">全部</button>
+                    <button class="filter-btn" onclick="filterCourses('cardio', this)">有氧燃脂</button>
+                    <button class="filter-btn" onclick="filterCourses('pilates', this)">普拉提</button>
+                    <button class="filter-btn" onclick="filterCourses('stretch', this)">拉伸放松</button>
+                    <button class="filter-btn" onclick="filterCourses('correction', this)">体态矫正</button>
+                </div>
+
+                <div class="courses-grid" id="coursesGrid"></div>
+
+                <div class="course-cta">
+                    <p>完成评估后，AI会为你推荐最适合的课程组合</p>
+                    <button class="btn btn-primary" onclick="switchTab('assess')">去评估 →</button>
+                </div>
+
+                <div class="update-bar">
+                    <div class="update-info">
+                        <span class="update-icon">🔄</span>
+                        <span>课程库上次更新：<span id="lastUpdate">加载中...</span></span>
                     </div>
-                    <span class="post-tag">打卡</span>
-                </div>
-                <div class="post-content">
-                    今天完成了第一次30分钟有氧训练！虽然中间休息了好几次，但是坚持下来了！感觉整个人都轻松了～继续加油💪
-                </div>
-                <div class="post-actions">
-                    <button class="post-action">❤️ 128</button>
-                    <button class="post-action">💬 23</button>
-                    <button class="post-action">⭐ 收藏</button>
+                    <button class="btn btn-outline btn-sm" id="updateBtn" onclick="handleUpdateCourses()">检查更新</button>
                 </div>
             </div>
-
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-avatar">🌻</div>
-                    <div class="post-info">
-                        <div class="post-name">向日葵少女</div>
-                        <div class="post-time">5小时前</div>
-                    </div>
-                    <span class="post-tag">食谱</span>
-                </div>
-                <div class="post-content">
-                    分享今天的减脂午餐：藜麦鸡胸肉沙拉🥗 鸡胸肉用黑胡椒腌制，搭配牛油果和小番茄，好吃又饱腹！热量大概420大卡，蛋白质35g～
-                </div>
-                <div class="post-image-placeholder">📷 用户上传的美食图片</div>
-                <div class="post-actions">
-                    <button class="post-action">❤️ 256</button>
-                    <button class="post-action">💬 45</button>
-                    <button class="post-action">⭐ 收藏</button>
-                </div>
-            </div>
-
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-avatar">🌺</div>
-                    <div class="post-info">
-                        <div class="post-name">逆袭小辣椒</div>
-                        <div class="post-time">1天前</div>
-                    </div>
-                    <span class="post-tag">经验分享</span>
-                </div>
-                <div class="post-content">
-                    姐妹们！我终于突破平台期了！之前卡在58kg整整两周，按照AI推荐的方案调整了饮食结构（增加了蛋白质比例），一周就掉了1.2kg！果然科学减肥才是王道！
-                </div>
-                <div class="post-actions">
-                    <button class="post-action">❤️ 512</button>
-                    <button class="post-action">💬 89</button>
-                    <button class="post-action">⭐ 收藏</button>
-                </div>
-            </div>
-        </div>
-
-        <button class="btn btn-outline btn-full" style="margin-top:20px;">
-            查看更多动态 →
-        </button>
+        </section>
     </div>
-</section>
+
+    <!-- ===== Tab: 评估 ===== -->
+    <div class="tab-page" id="page-assess">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">AI智能评估</h2>
+                <p class="section-subtitle">填写以下信息，AI将为你生成专属的减肥方案</p>
+
+                <div class="assess-form">
+                    <!-- 步骤1 -->
+                    <div class="form-step" id="step1">
+                        <div class="step-header"><span class="step-num">1</span><h3>基本信息</h3></div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>年龄</label><input type="number" id="age" placeholder="例如：25" min="12" max="65"></div>
+                            <div class="form-group"><label>身高 (cm)</label><input type="number" id="height" placeholder="例如：165" min="100" max="220"></div>
+                            <div class="form-group"><label>体重 (kg)</label><input type="number" id="weight" placeholder="例如：60" min="30" max="200" step="0.1"></div>
+                            <div class="form-group"><label>体脂率 (%) <span class="optional">选填</span></label><input type="number" id="bodyFat" placeholder="例如：28" min="5" max="60" step="0.1"></div>
+                            <div class="form-group"><label>腰围 (cm) <span class="optional">选填</span></label><input type="number" id="waist" placeholder="例如：75" min="40" max="150"></div>
+                            <div class="form-group"><label>目标体重 (kg) <span class="optional">选填</span></label><input type="number" id="targetWeight" placeholder="例如：55" min="30" max="200" step="0.1"></div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>运动经验</label>
+                            <div class="radio-group">
+                                <label class="radio-card"><input type="radio" name="experience" value="beginner" checked><span class="radio-label">🌱 小白<br><small>几乎不运动</small></span></label>
+                                <label class="radio-card"><input type="radio" name="experience" value="beginner-plus"><span class="radio-label">🌿 入门<br><small>偶尔运动</small></span></label>
+                                <label class="radio-card"><input type="radio" name="experience" value="intermediate"><span class="radio-label">🌳 进阶<br><small>规律运动</small></span></label>
+                                <label class="radio-card"><input type="radio" name="experience" value="advanced"><span class="radio-label">🌲 高级<br><small>长期健身</small></span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤2 -->
+                    <div class="form-step" id="step2">
+                        <div class="step-header"><span class="step-num">2</span><h3>选择你的体型</h3></div>
+                        <div class="body-type-grid">
+                            <label class="body-type-card" data-type="apple"><input type="radio" name="bodyType" value="apple"><div class="body-type-content"><div class="body-type-shape apple-shape"></div><div class="body-type-name">🍎 苹果型</div><div class="body-type-desc">腰腹丰满，四肢较细</div></div></label>
+                            <label class="body-type-card" data-type="pear"><input type="radio" name="bodyType" value="pear"><div class="body-type-content"><div class="body-type-shape pear-shape"></div><div class="body-type-name">🍐 梨型</div><div class="body-type-desc">臀腿丰满，上身纤细</div></div></label>
+                            <label class="body-type-card" data-type="hourglass"><input type="radio" name="bodyType" value="hourglass"><div class="body-type-content"><div class="body-type-shape hourglass-shape"></div><div class="body-type-name">⏳ 沙漏型</div><div class="body-type-desc">腰细臀宽，曲线匀称</div></div></label>
+                            <label class="body-type-card" data-type="rectangle"><input type="radio" name="bodyType" value="rectangle"><div class="body-type-content"><div class="body-type-shape rectangle-shape"></div><div class="body-type-name">📏 矩形型</div><div class="body-type-desc">上下均匀，曲线不明显</div></div></label>
+                            <label class="body-type-card" data-type="inverted-triangle"><input type="radio" name="bodyType" value="inverted-triangle"><div class="body-type-content"><div class="body-type-shape triangle-shape"></div><div class="body-type-name">🔺 倒三角型</div><div class="body-type-desc">肩宽上身壮，臀腿纤细</div></div></label>
+                        </div>
+                    </div>
+
+                    <!-- 步骤3 -->
+                    <div class="form-step" id="step3">
+                        <div class="step-header"><span class="step-num">3</span><h3>健康状况（选填）</h3></div>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>是否有以下情况？</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-item"><input type="checkbox" name="health" value="pcos"><span>多囊卵巢综合征（PCOS）</span></label>
+                                    <label class="checkbox-item"><input type="checkbox" name="health" value="thyroid"><span>甲状腺功能异常</span></label>
+                                    <label class="checkbox-item"><input type="checkbox" name="health" value="insulin"><span>胰岛素抵抗</span></label>
+                                    <label class="checkbox-item"><input type="checkbox" name="health" value="knee"><span>膝盖/关节问题</span></label>
+                                    <label class="checkbox-item"><input type="checkbox" name="health" value="high-pressure"><span>工作压力大/睡眠不好</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-lg btn-full" onclick="runAssessment()">🔍 生成我的专属方案</button>
+                </div>
+
+                <!-- 评估结果 -->
+                <div class="result-panel" id="resultPanel" style="display:none;">
+                    <div class="result-header">
+                        <h2>🌟 你的专属评估报告</h2>
+                        <p id="resultSummary"></p>
+                    </div>
+                    <div class="result-grid">
+                        <div class="result-card"><div class="result-card-icon">📊</div><h4>身体数据</h4><div class="result-data" id="resultBodyData"></div></div>
+                        <div class="result-card"><div class="result-card-icon">🎯</div><h4>减肥目标</h4><div class="result-data" id="resultGoal"></div></div>
+                        <div class="result-card"><div class="result-card-icon">⚠️</div><h4>健康预警</h4><div class="result-data" id="resultHealth"></div></div>
+                        <div class="result-card"><div class="result-card-icon">💪</div><h4>运动建议</h4><div class="result-data" id="resultExercise"></div></div>
+                    </div>
+                    <div class="result-diet" id="resultDiet"><h3>🍽️ 今日饮食建议</h3><div class="diet-plan" id="dietPlan"></div></div>
+                    <div class="result-courses" id="resultCourses"><h3>🎬 推荐跟练课程</h3><div class="course-list" id="courseList"></div></div>
+                    <button class="btn btn-secondary" onclick="resetAssessment()" style="margin-top:20px;">重新评估</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== Tab: 记录 ===== -->
+    <div class="tab-page" id="page-records">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">饮食与运动记录</h2>
+                <p class="section-subtitle">记录每一天，看见自己的改变</p>
+
+                <!-- 饮食管理仪表盘 -->
+                <div class="diet-dashboard">
+                    <div class="calorie-summary">
+                        <div class="calorie-ring">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" class="ring-bg"/>
+                                <circle cx="60" cy="60" r="50" class="ring-fill" id="calorieRing"/>
+                            </svg>
+                            <div class="calorie-text">
+                                <div class="calorie-consumed" id="calorieConsumed">0</div>
+                                <div class="calorie-label">/ <span id="calorieTarget">1500</span> kcal</div>
+                            </div>
+                        </div>
+                        <div class="calorie-details">
+                            <div class="macro-item"><div class="macro-bar protein-bar" style="width:0%" id="proteinBar"></div><span class="macro-name">蛋白质</span><span class="macro-value" id="proteinValue">0g</span></div>
+                            <div class="macro-item"><div class="macro-bar carb-bar" style="width:0%" id="carbBar"></div><span class="macro-name">碳水</span><span class="macro-value" id="carbValue">0g</span></div>
+                            <div class="macro-item"><div class="macro-bar fat-bar" style="width:0%" id="fatBar"></div><span class="macro-name">脂肪</span><span class="macro-value" id="fatValue">0g</span></div>
+                        </div>
+                    </div>
+
+                    <div class="meal-cards">
+                        <div class="meal-card">
+                            <div class="meal-icon">🌅</div><h4>早餐</h4>
+                            <div class="meal-content" id="breakfastContent"><p class="meal-placeholder">完成评估后获取推荐</p></div>
+                            <div class="meal-calories" id="breakfastCal">~350 kcal</div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">☀️</div><h4>午餐</h4>
+                            <div class="meal-content" id="lunchContent"><p class="meal-placeholder">完成评估后获取推荐</p></div>
+                            <div class="meal-calories" id="lunchCal">~500 kcal</div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">🌙</div><h4>晚餐</h4>
+                            <div class="meal-content" id="dinnerContent"><p class="meal-placeholder">完成评估后获取推荐</p></div>
+                            <div class="meal-calories" id="dinnerCal">~400 kcal</div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">🧁</div><h4>加餐</h4>
+                            <div class="meal-content" id="snackContent"><p class="meal-placeholder">完成评估后获取推荐</p></div>
+                            <div class="meal-calories" id="snackCal">~250 kcal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 拍照识别 -->
+                <div class="upload-area" id="foodUpload">
+                    <div class="upload-icon">📸</div>
+                    <h4>拍照识别热量</h4>
+                    <p>上传你的餐食照片，AI帮你估算热量</p>
+                    <input type="file" id="foodPhoto" accept="image/*" onchange="handleFoodPhoto(event)" style="display:none">
+                    <button class="btn btn-outline" onclick="document.getElementById('foodPhoto').click()">选择照片</button>
+                    <div class="food-result" id="foodResult" style="display:none;">
+                        <div class="food-identified" id="foodIdentified"></div>
+                        <div class="food-calories" id="foodCalories"></div>
+                    </div>
+                </div>
+
+                <!-- 饮食记录历史 -->
+                <div class="record-history" id="dietHistory">
+                    <h3>📝 今日饮食记录</h3>
+                    <div class="history-list" id="dietHistoryList">
+                        <p class="history-empty">还没有记录，拍照或手动添加今天的饮食吧～</p>
+                    </div>
+                    <button class="btn btn-outline btn-full" onclick="addManualDietRecord()">+ 手动记录</button>
+                </div>
+
+                <!-- 运动记录 -->
+                <div class="record-history" id="exerciseHistory" style="margin-top:24px;">
+                    <h3>🏃 今日运动记录</h3>
+                    <div class="history-list" id="exerciseHistoryList">
+                        <p class="history-empty">今天还没有运动记录，去课程区跟练吧～</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== Tab: 计划 ===== -->
+    <div class="tab-page" id="page-plan">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">我的训练计划</h2>
+                <p class="section-subtitle">自定义每天的运动安排，打造专属训练日程</p>
+
+                <!-- 今日计划 -->
+                <div class="plan-today">
+                    <div class="plan-date-bar">
+                        <button class="btn btn-text" onclick="planPrevDay()">‹</button>
+                        <h3 id="planDate">今天</h3>
+                        <button class="btn btn-text" onclick="planNextDay()">›</button>
+                    </div>
+                    <div class="plan-timeline" id="planTimeline">
+                        <div class="timeline-empty">
+                            <div class="empty-icon">📅</div>
+                            <p>今天还没有安排训练</p>
+                            <button class="btn btn-primary" onclick="showAddPlanModal()">+ 添加训练</button>
+                        </div>
+                    </div>
+                    <div class="plan-summary" id="planSummary" style="display:none;">
+                        <div class="plan-summary-item">
+                            <span class="plan-summary-num" id="planTotalCount">0</span>
+                            <span class="plan-summary-label">个训练</span>
+                        </div>
+                        <div class="plan-summary-item">
+                            <span class="plan-summary-num" id="planTotalDuration">0</span>
+                            <span class="plan-summary-label">分钟</span>
+                        </div>
+                        <div class="plan-summary-item">
+                            <span class="plan-summary-num" id="planTotalCal">0</span>
+                            <span class="plan-summary-label">千卡</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 训练包 -->
+                <div class="plan-packages">
+                    <h3>📦 我的训练包</h3>
+                    <p class="section-subtitle" style="margin-bottom:16px;">把常用的训练组合保存为模板，一键复用</p>
+                    <div class="packages-grid" id="packagesGrid">
+                        <div class="package-card package-add" onclick="showAddPlanModal()">
+                            <div class="package-add-icon">+</div>
+                            <div>新建训练包</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== Tab: 我的 ===== -->
+    <div class="tab-page" id="page-profile">
+        <section class="section">
+            <div class="container">
+                <!-- 用户卡片 -->
+                <div class="profile-card">
+                    <div class="profile-avatar" id="profileAvatar">👩</div>
+                    <div class="profile-name" id="profileName">健身女孩</div>
+                    <div class="profile-level">🌱 入门级选手</div>
+                    <button class="btn btn-outline btn-sm" onclick="showLoginModal()">编辑资料</button>
+                </div>
+
+                <!-- 数据概览 -->
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="profile-stat-num" id="profileDays">0</div>
+                        <div class="profile-stat-label">累计打卡(天)</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-num" id="profileWorkouts">0</div>
+                        <div class="profile-stat-label">完成训练</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-num" id="profileCalories">0</div>
+                        <div class="profile-stat-label">消耗热量</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-num" id="profileMinutes">0</div>
+                        <div class="profile-stat-label">运动时长</div>
+                    </div>
+                </div>
+
+                <!-- 身体数据 -->
+                <div class="profile-section">
+                    <h3>📊 我的身体数据</h3>
+                    <div class="profile-data-grid" id="profileBodyData">
+                        <div class="profile-data-item"><span class="profile-data-label">身高</span><span class="profile-data-value" id="pdHeight">未填写</span></div>
+                        <div class="profile-data-item"><span class="profile-data-label">体重</span><span class="profile-data-value" id="pdWeight">未填写</span></div>
+                        <div class="profile-data-item"><span class="profile-data-label">BMI</span><span class="profile-data-value" id="pdBMI">未评估</span></div>
+                        <div class="profile-data-item"><span class="profile-data-label">体型</span><span class="profile-data-value" id="pdBodyType">未评估</span></div>
+                        <div class="profile-data-item"><span class="profile-data-label">基础代谢</span><span class="profile-data-value" id="pdBMR">未评估</span></div>
+                        <div class="profile-data-item"><span class="profile-data-label">目标体重</span><span class="profile-data-value" id="pdTarget">未设定</span></div>
+                    </div>
+                </div>
+
+                <!-- 设置菜单 -->
+                <div class="profile-section">
+                    <h3>⚙️ 设置</h3>
+                    <div class="profile-menu">
+                        <div class="menu-item" onclick="switchTab('assess')">
+                            <span class="menu-icon">🎯</span><span class="menu-text">重新评估</span><span class="menu-arrow">›</span>
+                        </div>
+                        <div class="menu-item" onclick="switchTab('plan')">
+                            <span class="menu-icon">📅</span><span class="menu-text">训练计划</span><span class="menu-arrow">›</span>
+                        </div>
+                        <div class="menu-item" onclick="exportUserData()">
+                            <span class="menu-icon">📤</span><span class="menu-text">导出数据</span><span class="menu-arrow">›</span>
+                        </div>
+                        <div class="menu-item" onclick="clearAllData()">
+                            <span class="menu-icon">🗑️</span><span class="menu-text">清除所有数据</span><span class="menu-arrow">›</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</main>
+
+<!-- ===== 底部导航栏（移动端） ===== -->
+<nav class="bottom-nav" id="bottomNav">
+    <button class="bottom-nav-item active" onclick="switchTab('home', event)" data-tab="home">
+        <span class="bottom-nav-icon">🏠</span>
+        <span class="bottom-nav-label">首页</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchTab('courses', event)" data-tab="courses">
+        <span class="bottom-nav-icon">🎬</span>
+        <span class="bottom-nav-label">课程</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchTab('records', event)" data-tab="records">
+        <span class="bottom-nav-icon">📝</span>
+        <span class="bottom-nav-label">记录</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchTab('plan', event)" data-tab="plan">
+        <span class="bottom-nav-icon">📅</span>
+        <span class="bottom-nav-label">计划</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchTab('profile', event)" data-tab="profile">
+        <span class="bottom-nav-icon">👤</span>
+        <span class="bottom-nav-label">我的</span>
+    </button>
+</nav>
 
 <!-- ===== 久坐提醒弹窗 ===== -->
 <div class="modal" id="reminderModal" style="display:none;">
     <div class="modal-overlay" onclick="closeReminderModal()"></div>
     <div class="modal-content reminder-popup">
-        <div class="popup-header">
-            <span class="popup-icon">⏰</span>
-            <h3>久坐提醒</h3>
-        </div>
+        <div class="popup-header"><span class="popup-icon">⏰</span><h3>久坐提醒</h3></div>
         <p class="popup-text">你已经坐了 <strong id="sedentaryMinutes">30</strong> 分钟啦！<br>站起来动一动吧～</p>
         <div class="popup-workout" id="popupWorkout" style="display:none;">
             <div class="popup-exercise-name" id="popupExerciseName">颈部环绕</div>
@@ -615,8 +582,52 @@
     </div>
 </div>
 
+<!-- ===== 添加训练弹窗 ===== -->
+<div class="modal" id="addPlanModal" style="display:none;">
+    <div class="modal-overlay" onclick="closeAddPlanModal()"></div>
+    <div class="modal-content" style="max-width:480px;">
+        <h3 style="margin-bottom:20px;">+ 添加训练到今日计划</h3>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>选择课程</label>
+            <select id="planCourseSelect" class="form-select">
+                <!-- JS动态填充 -->
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>训练时间</label>
+            <input type="time" id="planTime" value="08:00" class="form-input">
+        </div>
+        <div class="popup-actions">
+            <button class="btn btn-primary btn-full" onclick="confirmAddPlan()">确认添加</button>
+            <button class="btn btn-text" onclick="closeAddPlanModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 登录弹窗 ===== -->
+<div class="modal" id="loginModal" style="display:none;">
+    <div class="modal-overlay" onclick="closeLoginModal()"></div>
+    <div class="modal-content" style="max-width:400px;">
+        <h3 style="margin-bottom:8px;">登录 GirlFit</h3>
+        <p style="color:var(--text-light);margin-bottom:24px;font-size:14px;">保存你的数据，跨设备同步</p>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>手机号</label>
+            <input type="tel" id="loginPhone" placeholder="请输入手机号" class="form-input" maxlength="11">
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>验证码</label>
+            <div style="display:flex;gap:8px;">
+                <input type="text" id="loginCode" placeholder="请输入验证码" class="form-input" maxlength="6" style="flex:1;">
+                <button class="btn btn-outline btn-sm" onclick="sendLoginCode()" id="sendCodeBtn" style="white-space:nowrap;">发送验证码</button>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="doLogin()">登录</button>
+        <button class="btn btn-text btn-full" onclick="closeLoginModal()" style="margin-top:8px;">暂不登录</button>
+    </div>
+</div>
+
 <!-- ===== 底部 ===== -->
-<footer class="footer">
+<footer class="footer desktop-only">
     <div class="container">
         <div class="footer-content">
             <div class="footer-brand">
@@ -627,21 +638,15 @@
             <div class="footer-links">
                 <div class="footer-col">
                     <h4>功能</h4>
-                    <a href="#assess">AI评估</a>
-                    <a href="#courses">课程推荐</a>
-                    <a href="#diet">饮食管理</a>
+                    <a href="#">AI评估</a><a href="#">课程推荐</a><a href="#">饮食管理</a>
                 </div>
                 <div class="footer-col">
                     <h4>关于</h4>
-                    <a href="#">关于我们</a>
-                    <a href="#">隐私政策</a>
-                    <a href="#">用户协议</a>
+                    <a href="#">关于我们</a><a href="#">隐私政策</a><a href="#">用户协议</a>
                 </div>
                 <div class="footer-col">
                     <h4>联系</h4>
-                    <a href="#">客服微信</a>
-                    <a href="#">意见反馈</a>
-                    <a href="#">合作咨询</a>
+                    <a href="#">客服微信</a><a href="#">意见反馈</a><a href="#">合作咨询</a>
                 </div>
             </div>
         </div>
@@ -666,18 +671,16 @@
 
 <script src="app.js"></script>
 <script>
-// ===== PWA Service Worker 注册 =====
+// ===== PWA Service Worker =====
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
-// ===== PWA 安装提示 =====
+// ===== PWA 安装 =====
 let deferredPrompt = null;
-
 window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
-    // 延迟3秒后显示安装提示
     setTimeout(() => {
         if (deferredPrompt && !localStorage.getItem('gf_install_dismissed')) {
             document.getElementById('installBanner').style.display = 'flex';
@@ -689,9 +692,7 @@ function installApp() {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(choice => {
-        if (choice.outcome === 'accepted') {
-            document.getElementById('installBanner').style.display = 'none';
-        }
+        if (choice.outcome === 'accepted') document.getElementById('installBanner').style.display = 'none';
         deferredPrompt = null;
     });
 }
@@ -701,9 +702,34 @@ function dismissBanner() {
     localStorage.setItem('gf_install_dismissed', '1');
 }
 
-// ===== 视频播放功能 =====
+// ===== Tab切换 =====
+function switchTab(tabId, event) {
+    if (event) event.preventDefault();
+    // 隐藏所有页面
+    document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+    // 显示目标页面
+    const target = document.getElementById('page-' + tabId);
+    if (target) target.classList.add('active');
+    // 更新底部导航
+    document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+    const navBtn = document.querySelector(`.bottom-nav-item[data-tab="${tabId}"]`);
+    if (navBtn) navBtn.classList.add('active');
+    // 更新桌面导航
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const navLinks = document.querySelectorAll('.nav-link');
+    const tabMap = { home: 0, courses: 1, records: 2, plan: 3, profile: 4, assess: 1 };
+    const idx = tabMap[tabId];
+    if (idx !== undefined && navLinks[idx]) navLinks[idx].classList.add('active');
+    // 滚动到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 切换到记录tab时刷新数据
+    if (tabId === 'records') refreshRecordsPage();
+    if (tabId === 'profile') refreshProfilePage();
+    if (tabId === 'plan') refreshPlanPage();
+}
+
+// ===== 视频播放 =====
 function playVideo(videoUrl, title) {
-    // 创建视频播放弹窗
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.style.display = 'flex';

@@ -436,7 +436,6 @@ function resetAssessment() {
 function filterCourses(type, el) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     if (el) el.classList.add('active');
-    else event.target.classList.add('active');
 
     const grid = document.getElementById('coursesGrid');
     const filtered = type === 'all' ? courses : courses.filter(c => c.type === type);
@@ -713,6 +712,310 @@ function startSedentaryTracker() {
         const mins = Math.floor((Date.now() - sedentaryStartTime) / 60000);
         document.getElementById('sedentaryTime').textContent = mins;
     }, 60000);
+}
+
+// ===== 记录页面功能 =====
+let dietRecords = JSON.parse(localStorage.getItem('gf_diet_records') || '[]');
+let exerciseRecords = JSON.parse(localStorage.getItem('gf_exercise_records') || '[]');
+
+function getTodayStr() {
+    return new Date().toLocaleDateString('zh-CN');
+}
+
+function addDietRecord(name, calories, protein, carb, fat, icon) {
+    const record = {
+        id: Date.now(),
+        date: getTodayStr(),
+        name, calories, protein, carb, fat,
+        icon: icon || '🍽️',
+        time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+    };
+    dietRecords.push(record);
+    localStorage.setItem('gf_diet_records', JSON.stringify(dietRecords));
+    refreshRecordsPage();
+}
+
+function addManualDietRecord() {
+    const name = prompt('食物名称：');
+    if (!name) return;
+    const cal = parseInt(prompt('热量（千卡）：') || '0');
+    addDietRecord(name, cal, 0, 0, 0, '🍽️');
+}
+
+function deleteDietRecord(id) {
+    dietRecords = dietRecords.filter(r => r.id !== id);
+    localStorage.setItem('gf_diet_records', JSON.stringify(dietRecords));
+    refreshRecordsPage();
+}
+
+function addExerciseRecord(name, duration, calories) {
+    const record = {
+        id: Date.now(),
+        date: getTodayStr(),
+        name, duration, calories,
+        time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+    };
+    exerciseRecords.push(record);
+    localStorage.setItem('gf_exercise_records', JSON.stringify(exerciseRecords));
+    refreshRecordsPage();
+}
+
+function deleteExerciseRecord(id) {
+    exerciseRecords = exerciseRecords.filter(r => r.id !== id);
+    localStorage.setItem('gf_exercise_records', JSON.stringify(exerciseRecords));
+    refreshRecordsPage();
+}
+
+function refreshRecordsPage() {
+    const today = getTodayStr();
+    const todayDiets = dietRecords.filter(r => r.date === today);
+    const todayExercises = exerciseRecords.filter(r => r.date === today);
+
+    // 饮食历史
+    const dietList = document.getElementById('dietHistoryList');
+    if (todayDiets.length === 0) {
+        dietList.innerHTML = '<p class="history-empty">还没有记录，拍照或手动添加今天的饮食吧～</p>';
+    } else {
+        const totalCal = todayDiets.reduce((s, r) => s + r.calories, 0);
+        dietList.innerHTML = todayDiets.map(r => `
+            <div class="history-item">
+                <span class="history-item-icon">${r.icon}</span>
+                <div class="history-item-info">
+                    <div class="history-item-name">${r.name}</div>
+                    <div class="history-item-meta">${r.time}</div>
+                </div>
+                <span class="history-item-cal">${r.calories} kcal</span>
+                <button class="history-item-del" onclick="deleteDietRecord(${r.id})">✕</button>
+            </div>
+        `).join('') + `<div style="text-align:center;padding:8px;font-size:14px;color:var(--text-light);">今日合计：<strong style="color:var(--primary)">${totalCal}</strong> kcal</div>`;
+    }
+
+    // 运动历史
+    const exList = document.getElementById('exerciseHistoryList');
+    if (todayExercises.length === 0) {
+        exList.innerHTML = '<p class="history-empty">今天还没有运动记录，去课程区跟练吧～</p>';
+    } else {
+        const totalDur = todayExercises.reduce((s, r) => s + r.duration, 0);
+        const totalCal = todayExercises.reduce((s, r) => s + r.calories, 0);
+        exList.innerHTML = todayExercises.map(r => `
+            <div class="history-item">
+                <span class="history-item-icon">🏃</span>
+                <div class="history-item-info">
+                    <div class="history-item-name">${r.name}</div>
+                    <div class="history-item-meta">${r.time} · ${r.duration}分钟</div>
+                </div>
+                <span class="history-item-cal">${r.calories} kcal</span>
+                <button class="history-item-del" onclick="deleteExerciseRecord(${r.id})">✕</button>
+            </div>
+        `).join('') + `<div style="text-align:center;padding:8px;font-size:14px;color:var(--text-light);">今日合计：<strong style="color:var(--primary)">${totalDur}</strong> 分钟 · <strong style="color:var(--primary)">${totalCal}</strong> kcal</div>`;
+    }
+}
+
+// ===== 计划页面功能 =====
+let planData = JSON.parse(localStorage.getItem('gf_plan_data') || '{}');
+let planDate = new Date();
+
+function getPlanKey(date) {
+    return date.toLocaleDateString('zh-CN');
+}
+
+function refreshPlanPage() {
+    const key = getPlanKey(planDate);
+    const plans = planData[key] || [];
+    const timeline = document.getElementById('planTimeline');
+    const dateEl = document.getElementById('planDate');
+    const summary = document.getElementById('planSummary');
+
+    // 更新日期显示
+    const today = new Date();
+    if (planDate.toDateString() === today.toDateString()) {
+        dateEl.textContent = '今天';
+    } else {
+        dateEl.textContent = planDate.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' });
+    }
+
+    if (plans.length === 0) {
+        timeline.innerHTML = `<div class="timeline-empty"><div class="empty-icon">📅</div><p>今天还没有安排训练</p><button class="btn btn-primary" onclick="showAddPlanModal()">+ 添加训练</button></div>`;
+        summary.style.display = 'none';
+    } else {
+        // 按时间排序
+        plans.sort((a, b) => a.time.localeCompare(b.time));
+        timeline.innerHTML = plans.map((p, i) => `
+            <div class="plan-item">
+                <span class="plan-item-time">${p.time}</span>
+                <div class="plan-item-info">
+                    <div class="plan-item-name">${p.icon || '🏋️'} ${p.name}</div>
+                    <div class="plan-item-meta">${p.duration}分钟 · ${p.type}</div>
+                </div>
+                <button class="plan-item-del" onclick="deletePlanItem('${key}', ${i})">✕</button>
+            </div>
+        `).join('');
+
+        const totalDur = plans.reduce((s, p) => s + (p.duration || 0), 0);
+        document.getElementById('planTotalCount').textContent = plans.length;
+        document.getElementById('planTotalDuration').textContent = totalDur;
+        document.getElementById('planTotalCal').textContent = Math.round(totalDur * 5);
+        summary.style.display = 'flex';
+    }
+}
+
+function planPrevDay() {
+    planDate.setDate(planDate.getDate() - 1);
+    refreshPlanPage();
+}
+
+function planNextDay() {
+    planDate.setDate(planDate.getDate() + 1);
+    refreshPlanPage();
+}
+
+function showAddPlanModal() {
+    const select = document.getElementById('planCourseSelect');
+    select.innerHTML = courses.map(c => `<option value="${c.id}">${c.icon} ${c.title} (${c.duration})</option>`).join('');
+    document.getElementById('addPlanModal').style.display = 'flex';
+}
+
+function closeAddPlanModal() {
+    document.getElementById('addPlanModal').style.display = 'none';
+}
+
+function confirmAddPlan() {
+    const courseId = parseInt(document.getElementById('planCourseSelect').value);
+    const time = document.getElementById('planTime').value;
+    const course = courses.find(c => c.id === courseId);
+    if (!course) return;
+
+    const key = getPlanKey(planDate);
+    if (!planData[key]) planData[key] = [];
+
+    planData[key].push({
+        courseId: course.id,
+        name: course.title,
+        icon: course.icon,
+        duration: parseInt(course.duration) || 30,
+        type: course.type === 'cardio' ? '有氧燃脂' : course.type === 'pilates' ? '普拉提' : course.type === 'stretch' ? '拉伸放松' : '体态矫正',
+        time: time
+    });
+
+    localStorage.setItem('gf_plan_data', JSON.stringify(planData));
+    closeAddPlanModal();
+    refreshPlanPage();
+}
+
+function deletePlanItem(key, index) {
+    if (planData[key]) {
+        planData[key].splice(index, 1);
+        localStorage.setItem('gf_plan_data', JSON.stringify(planData));
+        refreshPlanPage();
+    }
+}
+
+// ===== 我的页面 =====
+function refreshProfilePage() {
+    // 用户数据
+    if (userData.height) document.getElementById('pdHeight').textContent = userData.height + ' cm';
+    if (userData.weight) document.getElementById('pdWeight').textContent = userData.weight + ' kg';
+    if (userData.bmi) document.getElementById('pdBMI').textContent = userData.bmi;
+    if (userData.bodyType) {
+        const typeMap = { apple: '🍎 苹果型', pear: '🍐 梨型', hourglass: '⏳ 沙漏型', rectangle: '📏 矩形型', 'inverted-triangle': '🔺 倒三角型' };
+        document.getElementById('pdBodyType').textContent = typeMap[userData.bodyType] || userData.bodyType;
+    }
+    if (userData.bmr) document.getElementById('pdBMR').textContent = userData.bmr + ' kcal';
+    if (userData.targetWeight) document.getElementById('pdTarget').textContent = userData.targetWeight + ' kg';
+
+    // 统计数据
+    const allDays = new Set([...dietRecords.map(r => r.date), ...exerciseRecords.map(r => r.date)]);
+    document.getElementById('profileDays').textContent = allDays.size;
+    document.getElementById('profileWorkouts').textContent = exerciseRecords.length;
+    document.getElementById('profileCalories').textContent = exerciseRecords.reduce((s, r) => s + r.calories, 0);
+    document.getElementById('profileMinutes').textContent = exerciseRecords.reduce((s, r) => s + r.duration, 0);
+
+    // 登录状态
+    const userName = localStorage.getItem('gf_user_name');
+    if (userName) {
+        document.getElementById('profileName').textContent = userName;
+    }
+}
+
+// ===== 登录功能 =====
+function showLoginModal() {
+    document.getElementById('loginModal').style.display = 'flex';
+}
+
+function closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+}
+
+let codeTimer = null;
+function sendLoginCode() {
+    const phone = document.getElementById('loginPhone').value;
+    if (!phone || phone.length !== 11) {
+        alert('请输入正确的手机号');
+        return;
+    }
+    const btn = document.getElementById('sendCodeBtn');
+    btn.disabled = true;
+    let sec = 60;
+    btn.textContent = sec + 's';
+    codeTimer = setInterval(() => {
+        sec--;
+        btn.textContent = sec + 's';
+        if (sec <= 0) {
+            clearInterval(codeTimer);
+            btn.textContent = '发送验证码';
+            btn.disabled = false;
+        }
+    }, 1000);
+    // 模拟发送（实际需要对接短信API）
+    alert('验证码已发送（演示模式，任意输入6位数字即可登录）');
+}
+
+function doLogin() {
+    const phone = document.getElementById('loginPhone').value;
+    const code = document.getElementById('loginCode').value;
+    if (!phone || phone.length !== 11) { alert('请输入正确的手机号'); return; }
+    if (!code || code.length < 4) { alert('请输入验证码'); return; }
+
+    // 模拟登录成功
+    localStorage.setItem('gf_user_phone', phone);
+    localStorage.setItem('gf_user_name', '用户' + phone.slice(-4));
+    document.getElementById('profileName').textContent = '用户' + phone.slice(-4);
+    closeLoginModal();
+    alert('登录成功！');
+}
+
+// ===== 数据管理 =====
+function exportUserData() {
+    const data = {
+        userData,
+        dietRecords,
+        exerciseRecords,
+        planData,
+        exportTime: new Date().toLocaleString('zh-CN')
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'girlfit-data-' + new Date().toLocaleDateString('zh-CN') + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('数据已导出！');
+}
+
+function clearAllData() {
+    if (!confirm('确定要清除所有数据吗？此操作不可恢复！')) return;
+    localStorage.removeItem('gf_diet_records');
+    localStorage.removeItem('gf_exercise_records');
+    localStorage.removeItem('gf_plan_data');
+    localStorage.removeItem('gf_courses');
+    localStorage.removeItem('gf_user_name');
+    localStorage.removeItem('gf_user_phone');
+    dietRecords = [];
+    exerciseRecords = [];
+    planData = {};
+    alert('所有数据已清除！');
+    location.reload();
 }
 
 // ===== 页面初始化 =====
